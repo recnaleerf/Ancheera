@@ -118,6 +118,23 @@
     '300291', '301051', '300471', '301061'
   ];
 
+  var normalRaids    = [
+    '300011', '300031', '300061', '300081', '300111', '300141', '300171', '300181', '300201',
+    '300211', '300231', '300241'
+  ];
+  var hardRaids      = [
+    '300021', '300041'
+  ];
+  var magnaRaids     = [
+    '300051'
+  ];
+  var summonRaids    = [
+    '300421'
+  ];
+  var highLevelRaids = [
+    '300441'
+  ];
+
     //   var currRaidList = [
     //   '300031', '300041', '300051', '300441',
     //   '300081', '300091', '300101', '300491',
@@ -1098,9 +1115,10 @@
       }});
     }
   };
-  var hideBattleJQuery = function(currQuest, isHidden) {
 
+  var hideBattleJQuery = function(currQuest, isHidden) {
   };
+
   var setBattleJQuery = function(currQuest) {
     var devID;
     for (var k = 0; k < currQuest.devIDs.length; k++) {
@@ -1219,7 +1237,6 @@
       }
     }
   };
-
 
   var parseQuestID = function(url) {
     return url.substring(url.indexOf('data/') + 5, url.lastIndexOf('/'));
@@ -1463,10 +1480,10 @@
     currRaidList.sort(sort);
     completedRaidList.sort(sort);
     for (var i = 0; i < raidList.length; i++) {
-      Message.PostAll({'hideObject': {
+      Message.PostAll( {'hideObject': {
         'id': '#daily-raid-' + raidList[i],
         'value': true
-      }});
+      } });
     }
     for (var i = 0; i < currRaidList.length; i++) {
       var id = currRaidList[i];

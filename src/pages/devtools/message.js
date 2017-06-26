@@ -1,23 +1,24 @@
 (function() {
-  var initialized = false;
-  var url = '';
-  var jQueryCache = {};
-  var isJST = true;
-  var times = {};
-  var timeZone = '';
-  var filter = 'all';
-  var search = '';
+  var initialized    = false;
+  var url            = '';
+  var jQueryCache    = {};
+  var isJST          = true;
+  var times          = {};
+  var timeZone       = '';
+  var filter         = 'all';
+  var search         = '';
   var sortedSupplies = [];
-  var imageURL = '../../assets/images/';
-  var themeName = '';
+  var imageURL       = '../../assets/images/';
+  var themeName      = '';
 
   var $supplyList = $('#supply-list');
   var $supplyItem = $supplyList.find('.supply-item').first().clone();
   $supplyList.find('.supply-item').first().remove();
-  $searchSupplies = $('#search-supplies');
+  $searchSupplies   = $('#search-supplies');
   $supplyCategories = $('#supply-categories');
-  $firstCategory = $supplyCategories.children('.active');
-  $currCategory = $firstCategory;
+  $firstCategory    = $supplyCategories.children('.active');
+  $currCategory     = $firstCategory;
+
   $('#supply-categories > li > a').click(function() {
     if ($(this).data('category') !== 'all') {
       search = '';
@@ -29,36 +30,41 @@
 
   $('.tooltip-down').tooltip();
 
-  var $raidsPanel = $('#raids-panel');
+  var $raidsPanel    = $('#raids-panel');
   var $dailyRaidList = $('#daily-raid-list');
+  var $normalRaids   = $('#raids-normal-dailies');
+  var $hardRaids     = $('raids-hard-dailies');
+  var $summonRaids   = $('raids-summon-dailies');
+  var $hlRaids        = $('raids-hl-dailies');
+
   var $completedRaidList = $('#completed-raid-list');
+
   var $dailyRaid = $dailyRaidList.find('.daily-quest-panel').first().clone();
   $dailyRaidList.find('.daily-quest-panel').first().remove();
   var $dailyRaidBig = $dailyRaidList.find('.daily-quest-panel').first().clone();
   $dailyRaidList.find('.daily-quest-panel').first().remove();
 
   var $dailyDistinctionList = $('#daily-distinction-list');
-  var $dailyDistinction = $dailyDistinctionList.find('.casino-div').first().clone();
+  var $dailyDistinction     = $dailyDistinctionList.find('.casino-div').first().clone();
   $dailyDistinctionList.find('.casino-div').first().remove();
 
   var $questCharactersPanel = $('#quest-characters-panel');
-  var $questCharacter = $('#quest-character').clone();
+  var $questCharacter       = $('#quest-character').clone();
   $('#quest-character').remove();
 
   var $questEnemiesPanel = $('#quest-enemies-panel');
-  var $questEnemy = $('#quest-enemy').clone();
+  var $questEnemy        = $('#quest-enemy').clone();
   $('#quest-enemy').remove();
 
   var $buffsPanel = $('#quest-buffs-panel');
-  var $questBuff = $('#quest-buff').clone();
+  var $questBuff  = $('#quest-buff').clone();
   $('#quest-buff').remove();
 
   var $weaponPlanner = $('#weapon-planner-container');
-  var $weaponType = $('#weapon-type-container');
+  var $weaponType    = $('#weapon-type-container');
   var $weaponElement = $('#weapon-element-container');
-  var $weaponStart = $('#weapon-start-container');
-  var $weaponEnd = $('#weapon-end-container');
-
+  var $weaponStart   = $('#weapon-start-container');
+  var $weaponEnd     = $('#weapon-end-container');
 
   $searchSupplies.on('input paste', function(){
     if ($(this).val() !== '') {
@@ -69,8 +75,6 @@
     searchSupplies($(this).val());
     resetDropdowns();
   });
-
-
 
   $('#contents').find('.open-url').each(function() {
     $(this).click(function() {
@@ -140,7 +144,7 @@
   };
 
   var weaponBuild = {};
-  var weaponType= '';
+  var weaponType  = '';
 
   var resetDropdowns = function() {
     $weaponPlanner.find('.dropdown-text').text('Planner');
@@ -563,7 +567,7 @@
     if ((filter !== 'all' && filter !== category) || name.toLowerCase().indexOf(search) === -1) {
       newItem.hide();
     }
-    console.log('hi');
+
     newItem.data('name', name.toLowerCase());
     var imgURL;
     if (category === 'recovery') {
@@ -591,7 +595,7 @@
     newItem.tooltip();
     //alert(3);
     //if(sortedSupplies.length > 0) {
-    var low = 0;
+    var low  = 0;
     var high = sortedSupplies.length;
     while (low < high) {
       var mid = low + high >>> 1;
@@ -626,10 +630,10 @@
   var completeActiveCount    = 0;
 
   var generatePlanner = function(planner) {
-    var incompleteCount = 0;
-    var completeCount = 0;
+    var incompleteCount  = 0;
+    var completeCount    = 0;
     var $incompleteItems = $plannerIncompleteList.children('.weapon-item');
-    var $completeItems = $plannerCompleteList.children('.weapon-item');
+    var $completeItems   = $plannerCompleteList.children('.weapon-item');
     if (planner.length === 0) {
       clearPlanner();
       return;
@@ -974,5 +978,4 @@
   };
 
   Message.Post({'devAwake': true});
-
 })();
