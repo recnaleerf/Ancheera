@@ -13,7 +13,7 @@
   var dogeIcon  = '../../assets/images/icons/1300023.png';
 
   var raidImageURL = 'http://gbf.game-a1.mbga.jp/assets_en/img/sp/assets/summon/qm/';
-  var isHL = false;
+  var isHL         = false;
 
   var currRaidID = null;
   var currCoopID = null;
@@ -94,20 +94,24 @@
 
   var createRaid = function(sequence, sequence2, name, max, magDelta, url, animeIDs, animeCounts, animeTypes, isHL) {
     return {
-      sequence:  sequence,
-      sequence2: sequence2,
-      name: name,
-      max: max,
-      magDelta: magDelta,
-      url: imageURL + 'quests/' + url,
-      animeIDs: animeIDs,
+      sequence:    sequence,
+      sequence2:   sequence2,
+      name:        name,
+      max:         max,
+      magDelta:    magDelta,
+      url:         imageURL + 'quests/' + url,
+      animeIDs:    animeIDs,
       animeCounts: animeCounts,
-      animeTypes: animeTypes,
-      isHL: isHL,
-      isEnabled: true,
+      animeTypes:  animeTypes,
+      isHL:        isHL,
+      isEnabled:   true,
     };
   };
 
+  // TODO: These lists are dumb. Instead just use the `createRaid` function
+  // to have a "difficulty" property and use a proper function to simply
+  // `pick({ difficulty: level})` to automatically populate these instead
+  // of manual typing hell.
   var raidList = [
     '300011', '300021', '300031', '300041', '300051', '300421', '301381', '300441', '300451',
     '300061', '300071', '300081', '300091', '300101', '300411', '301071', '300491', '300501',
@@ -119,20 +123,20 @@
   ];
 
   var normalRaids    = [
-    '300011', '300031', '300061', '300081', '300111', '300141', '300171', '300181', '300201',
-    '300211', '300231', '300241'
+    '300011', '300031', '300061', '300081', '300111', '300141', '300181', '300211', '300241'
   ];
   var hardRaids      = [
-    '300021', '300041'
+    '300021', '300041', '300071', '300091', '300121', '300151', '300171', '300191', '300201',
+    '300221', '300231', '300251'
   ];
   var magnaRaids     = [
-    '300051'
+    '300051', '300101', '300161', '300261', '300271', '300281'
   ];
   var summonRaids    = [
-    '300421'
+    '300421', '301381', '300411', '301071', '300381', '300481'
   ];
   var highLevelRaids = [
-    '300441'
+    '300441', '300451', '300491', '300501', '300511', '300521'
   ];
 
     //   var currRaidList = [
@@ -1290,6 +1294,7 @@
         completedRaidList.splice(currIndex, 1);
         var found = false;
         for (var i = 0; i < currRaidList.length; i++) {
+          // TODO: What is the difference between `sequence` and `sequence2`????
           if (!Options.Get('sortRaidsDifficulty')) {
             if (raidInfo[id].sequence < raidInfo[currRaidList[i]].sequence) {
               currRaidList.splice(i, 0, id);
@@ -1335,15 +1340,15 @@
       }
       remainingQuests[id] = amount;
       setRemainingJquery(id);
-
-
     }
   };
 
+  // This function should be renamed to something proper
+  // It is actually updates the DOM of the devtools.html file
   var setRemainingJquery = function(id) {
     if (!Options.Get('isMagFest')) {
       Message.PostAll({'setText': {
-        'id': '#remaining-' + id,
+        'id':    '#remaining-' + id,
         'value': remainingQuests[id] + '/' + raidInfo[id].max
       }});
       // $raidsPanel.find('#remaining-' + id).first().text(amount + '/' + raidInfo[id].max);
@@ -1356,12 +1361,12 @@
     }
     if (Options.Get(id)) {
       Message.PostAll({'hideObject': {
-        'id': '#daily-raid-' + id,
+        'id':    '#daily-raid-' + id,
         'value': false
       }});
     } else {
       Message.PostAll({'hideObject': {
-        'id': '#daily-raid-' + id,
+        'id':    '#daily-raid-' + id,
         'value': true
       }});
     }
@@ -1369,16 +1374,18 @@
       for (var i = 0; i < currRaidList.length; i++) {
         if (!Options.Get('sortRaidsDifficulty')) {
           if (raidInfo[id].sequence < raidInfo[currRaidList[i]].sequence && Options.Get(currRaidList[i])) {
+            console.log('pushing a about raid list');
             Message.PostAll({'beforeObject': {
-              'id': '#daily-raid-' + id,
+              'id':     '#daily-raid-' + id,
               'target': '#daily-raid-' + currRaidList[i]
             }});
             return;
           }
         } else {
           if (raidInfo[id].sequence2 < raidInfo[currRaidList[i]].sequence2 && Options.Get(currRaidList[i])) {
+            console.log('pushing a about raid list sequence2?');
             Message.PostAll({'beforeObject': {
-              'id': '#daily-raid-' + id,
+              'id':     '#daily-raid-' + id,
               'target': '#daily-raid-' + currRaidList[i]
             }});
             return;
@@ -1386,7 +1393,7 @@
         }
       }
       Message.PostAll({'appendObject': {
-        'id': '#daily-raid-' + id,
+        'id':     '#daily-raid-' + id,
         'target': '#daily-raid-list'
       }});
       return;
@@ -1395,7 +1402,7 @@
         if (!Options.Get('sortRaidsDifficulty')) {
           if (raidInfo[id].sequence < raidInfo[completedRaidList[i]].sequence && Options.Get(completedRaidList[i])) {
             Message.PostAll({'beforeObject': {
-              'id': '#daily-raid-' + id,
+              'id':     '#daily-raid-' + id,
               'target': '#daily-raid-' + completedRaidList[i]
             }});
             return;
@@ -1403,7 +1410,7 @@
         } else {
           if (raidInfo[id].sequence2 < raidInfo[completedRaidList[i]].sequence2 && Options.Get(completedRaidList[i])) {
             Message.PostAll({'beforeObject': {
-              'id': '#daily-raid-' + id,
+              'id':     '#daily-raid-' + id,
               'target': '#daily-raid-' + completedRaidList[i]
             }});
             return;
@@ -1411,7 +1418,7 @@
         }
       }
       Message.PostAll({'appendObject': {
-        'id': '#daily-raid-' + id,
+        'id':     '#daily-raid-' + id,
         'target': '#completed-raid-list'
       }});
       return;
