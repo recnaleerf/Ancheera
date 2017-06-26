@@ -18,12 +18,12 @@
       '5':  createItem(10, false),
     },
     monthlies: {
-      '20013': createItem(5, false),
-      '20003': createItem(5, false),
+      '20013':      createItem(5, false),
+      '20003':      createItem(5, false),
       '1039900000': createItem(20, false),
       '1029900000': createItem(50, false),
-      '2': createItem(100, false),
-      '5': createItem(200, false),
+      '2':          createItem(100, false),
+      '5':          createItem(200, false)
     }
   };
   var casinoData = {
@@ -58,8 +58,8 @@
           callback();
         }
       });
-
     },
+
     InitializeDev: function() {
       var response = [];
       Object.keys(casino.dailies).forEach(function(key) {
@@ -72,6 +72,7 @@
       response.push(checkCollapse('monthlies'));
       return response;
     },
+
     Reset: function() {
       var tuples = {};
       Object.keys(casino.dailies).forEach(function(key) {
@@ -84,6 +85,7 @@
       setCasino(tuples, {}, [false, false]);
       resetUpdated();
     },
+
     MonthlyReset: function() {
       var tuples = {};
       Object.keys(casino.monthlies).forEach(function(key) {
@@ -91,6 +93,7 @@
       });
       setCasino({}, tuples, [false, false]);
     },
+
     SetCasino1: function(json) {
       var list      = json.list;
       var id;
@@ -110,9 +113,10 @@
         checkUpdated();
       }
     },
+
     SetCasino2: function(json) {
       var list      = json.list;
-      var shittyIndex;
+      var shittyIndex; // TODO: say what now?
       var id;
       var dailies   = {};
       var monthlies = {};
@@ -131,9 +135,10 @@
         checkUpdated();
       }
     },
+
     BuyCasino: function(json, payload) {
-      var id = json.article.item_ids[0];
-      var dailies = {};
+      var id        = json.article.item_ids[0];
+      var dailies   = {};
       var monthlies = {};
       if (casino.dailies[id] !== undefined) {
         dailies[id] = casino.dailies[id].amount - parseInt(payload.num);
@@ -158,6 +163,7 @@
       // }
     }
   };
+
   var setCasino = function(dailies, monthlies, updatedPages) {
     var updated = false;
     if (updatedPages !== undefined) {
@@ -168,6 +174,7 @@
         }
       }
     }
+
     Object.keys(dailies).forEach(function(key) {
       casino.dailies[key].updated = true;
       if (casino.dailies[key].amount !== dailies[key]) {
@@ -177,6 +184,7 @@
         updated = true;
       }
     });
+
     Object.keys(monthlies).forEach(function(key) {
       casino.monthlies[key].updated = true;
       if (casino.monthlies[key].amount !== monthlies[key]) {
@@ -194,12 +202,13 @@
 
   var checkCollapse = function(type) {
     var collapse = true;
-    var keys = Object.keys(casino[type]);
+    var keys     = Object.keys(casino[type]);
     for (var i = 0; i < keys.length; i++) {
       if (casino[type][keys[i]].amount !== 0) {
         collapse = false;
       }
     }
+
     return {'collapsePanel':{
       'id': '#collapse-casino-' + type,
       'value': collapse
@@ -218,26 +227,29 @@
     Object.keys(casino.dailies).forEach(function(key) {
       casino.dailies[key].updated = false;
     });
+
     Object.keys(casino.monthlies).forEach(function(key) {
       casino.monthlies[key].updated = false;
     });
+
     Storage.Set('casino', casino);
   };
 
   var checkUpdated = function() {
-    var dailies = {};
+    var dailies   = {};
     var monthlies = {};
     Object.keys(casino.dailies).forEach(function(key) {
       if (!casino.dailies[key].updated) {
         dailies[key] = 0;
       }
     });
+
     Object.keys(casino.monthlies).forEach(function(key) {
       if (!casino.monthlies[key].updated) {
         monthlies[key] = 0;
       }
     });
+
     setCasino(dailies, monthlies, [false, false]);
   };
-
 })();

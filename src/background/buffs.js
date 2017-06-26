@@ -57,11 +57,11 @@
     },
     StartBuff: function(json, payload) {
       if (json.success) {
-        var id = payload.support_id;
-        var level = payload.support_level;
-        var duration = parseInt(payload.support_time);
+        var id        = payload.support_id;
+        var level     = payload.support_level;
+        var duration  = parseInt(payload.support_time);
         var startTime = Date.now();
-        var index = buffs.length;
+        var index     = buffs.length;
         buffs.push(newBuff(id, level, startTime + duration * 3600000));
         startBuffTimer(buffs[index]);
         saveBuffs();
@@ -100,24 +100,24 @@
     if (buffs.length > index) {
       if (type === 'text') {
         return {'setText':{
-          'id': id + 'time',
+          'id':    id + 'time',
           'value': Time.ParseTime(Math.abs(buffs[index].endTime - Date.now()), 'h').replace(',','')
         }};
       } else if (type === 'image') {
         return {'setImage':{
-          'id': id + 'image',
+          'id':    id + 'image',
           'value': supportURL + buffInfo[buffs[index].id] + '_' + buffs[index].level + '.png'
         }};
       }
     } else {
       if (type === 'text') {
         return {'setText':{
-          'id': id + 'time',
+          'id':    id + 'time',
           'value': ''
         }};
       } else if (type === 'image') {
         return {'setImage':{
-          'id': id + 'image',
+          'id':    id + 'image',
           'value': '../../assets/images/icons/handtinytrans.gif'
         }};
       }
