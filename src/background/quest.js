@@ -321,21 +321,22 @@
 
   var quest = null;
   var raids = [];
+
   var createQuest = function(id, url, devID) {
     var devIDs = [];
     if (devID !== undefined) {
       devIDs.push(devID);
     }
     return {
-      id: id,
-      url: url,
-      image: greyIcon,
+      id:         id,
+      url:        url,
+      image:      greyIcon,
       characters: [null, null, null, null, null, null],
-      formation: [],
-      buffs: [],
-      enemies: [null, null, null],
-      summons: [null, null, null, null, null, null],
-      devIDs: devIDs
+      formation:  [],
+      buffs:      [],
+      enemies:    [null, null, null],
+      summons:    [null, null, null, null, null, null],
+      devIDs:     devIDs
     };
   };
 
@@ -350,24 +351,26 @@
 
   var createCharacter = function(image, currHP, maxHP, currCharge, maxCharge) {
     return {
-      image: image,
-      currHP: currHP,
-      maxHP: maxHP,
+      image:      image,
+      currHP:     currHP,
+      maxHP:      maxHP,
       currCharge: currCharge,
-      maxCharge: maxCharge,
-      skills: [null, null, null, null],
-      buffs: []
+      maxCharge:  maxCharge,
+      skills:     [null, null, null, null],
+      buffs:      []
     };
   };
+
   var createSkill = function(name, image, cooldown, turns, time) {
     return {
-      name: name,
-      image: image,
+      name:     name,
+      image:    image,
       cooldown: cooldown,
-      turns: turns,
-      time: time,
+      turns:    turns,
+      time:     time,
     };
   };
+
   var createBuff = function(owner, image, turns) {
     return {
       owner: owner,
@@ -375,18 +378,17 @@
       turns: turns
     };
   };
-
     //var enemies = [null, null, null];
 
   var createEnemy = function(image, currHP, maxHP, currCharge, maxCharge, mode) {
     return {
-      image: image,
-      currHP: currHP,
-      maxHP: maxHP,
+      image:      image,
+      currHP:     currHP,
+      maxHP:      maxHP,
       currCharge: currCharge,
-      maxCharge: maxCharge,
-      mode: mode,
-      debuffs: []
+      maxCharge:  maxCharge,
+      mode:       mode,
+      debuffs:    []
     };
   };
 
@@ -394,28 +396,29 @@
     return {
       owner: owner,
       image: image,
-      time: time
+      time:   time
     };
   };
   var createSummon = function(image, cooldown) {
     return {
-      image: image,
+      image:    image,
       cooldown: cooldown
     };
   };
+
   var questImageURLs = {};
-
-  var events = [];
-
+  var events         = [];
 
   var createEvent = function(url) {
-    var bosses = [];
-    var bossID = null;
+    var bosses    = [];
+    var bossID    = null;
     var currency1 = null;
     var currency2 = null;
+
     if (url.indexOf('teamraid') !== -1) {
       currency1 = '10022';
-      bossID = '7139';
+      bossID    = '7139';
+
       bosses.push({
         'image': eyeIcon,
         'id': '31',
@@ -425,6 +428,7 @@
         'hasAP': false,
         'hasCurrency': true
       });
+
       bosses.push({
         'image': dogeIcon,
         'id': '41',
@@ -434,6 +438,7 @@
         'hasAP': false,
         'hasCurrency': false
       });
+
       bosses.push({
         'image': dogeIcon,
         'id': '51',
@@ -445,15 +450,18 @@
       });
     }
     return {
-      url: url,
-      bosses: bosses,
-      bossID: bossID,
+      url:       url,
+      bosses:    bosses,
+      bossID:    bossID,
       currency1: currency1,
       currency2: currency2,
     };
   };
   events.push(createEvent('#event/teamraid024'));
 
+  // Here's the actual `class` and initializer of this file.
+  // TODO: Everything else above is either a util/helper
+  // or something that should be moved out and doesn't belong in here
   window.Quest = {
     Initialize: function(callback) {
       if (Options.Get('sortRaidsDifficulty')) {
@@ -520,9 +528,11 @@
         }
         saveRemainingRaids();
       });
+
       Options.Get('sortRaidsDifficulty', function(id, value) {
         sortRaids(value);
       });
+
       for (var i = 0; i < raidList.length; i++) {
         Options.Get(raidList[i], function(id, value) {
           setRemainingJquery(id);
@@ -532,6 +542,7 @@
           //   }});
         });
       }
+
       for (var i = 0; i < raidList.length; i++) {
         var id = raidList[i];
         if (raidInfo[id].animeIDs !== null) {
@@ -546,6 +557,7 @@
           }
         }
       }
+
       for (var i = 0; i < events.length; i++) {
         if (events[i].currency1 !== null) {
           Supplies.Get(events[i].currency1, 'event', function(id, num) {
@@ -577,6 +589,7 @@
           });
         }
       }
+
       APBP.GetAP(function(num) {
         for (var i = 0; i < events.length; i++) {
           for (var j = 0; j < events[i].bosses.length; j++) {
@@ -599,6 +612,7 @@
         }
       });
     },
+
     InitializeDev: function() {
       var response = [];
       for (var i = 0; i < raidList.length; i++) {
@@ -623,24 +637,27 @@
           'animeIDs': raid.animeIDs,
           'animeAmounts': animeAmounts
         }});
-
       }
+
       for (var i = 0; i < completedRaidList.length; i++) {
         response.push({'appendObject': {
           'id': '#daily-raid-' + completedRaidList[i],
           'target': '#completed-raid-list'
         }});
       }
+
       for (var i = 0; i < 4; i++) {
         response.push({'addQuestCharacter': {
           'index': i
         }});
       }
+
       for (var i = 0; i < 3; i++) {
         response.push({'addQuestEnemy': {
           'index': i
         }});
       }
+
       //setQuestsJQuery();
       for (var i = 0; i < events.length; i++) {
         response.push({'setText': {
@@ -654,6 +671,7 @@
           }});
         }
       }
+
       for (var i = 0; i < raidList.length; i++) {
         response.push({'hideObject': {
           'id': '#daily-raid-' + raidList[i],
@@ -718,11 +736,13 @@
         setQuestsJQuery();
       }
     },
+
     CheckMulti: function(json) {
       if (json.is_multi) {
         quest.url = '#raid_multi/';
       }
     },
+
     CreateRaid: function(json, devID) {
       if (json.result !== false && json.is_host === false) {
         var id = '' + json.raid_id;
@@ -735,6 +755,7 @@
         setQuestsJQuery();
       }
     },
+
     CompleteQuest: function(url) {
       var id = url.substring(url.lastIndexOf('/') + 1, url.indexOf('?'));
       if (quest !== null) {
@@ -754,6 +775,7 @@
       }
       setQuestsJQuery();
     },
+
     StartBattle: function(json, devID) {
       var id = '' + json.raid_id;
       var currQuest;
@@ -791,6 +813,7 @@
       if (currQuest.devIDs.indexOf(devID) === -1) {
         currQuest.devIDs.push(devID);
       }
+
       setQuestsJQuery();
       // if(json.player !== undefined) {
       //   for(var i = 0; i < 6; i++) {
@@ -896,6 +919,7 @@
       // }
       // setBattleJQuery(currQuest);
     },
+
     BattleAction: function(json, payload, devID) {
       if (json.popup !== undefined) {
         return;
@@ -912,6 +936,7 @@
           }
         }
       }
+
       if (currQuest.devIDs.indexOf(devID) === -1) {
         currQuest.devIDs.push(devID);
       }
@@ -969,18 +994,19 @@
               return;
             }
           }
+
           if (Options.Get('skip') && Options.Get('skipNext')) {
             Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
             return;
           }
         }
-        if (Options.Get('ougiRefresh') && (json.scenario[i].cmd == 'special' || json.scenario[i].cmd == 'special_npc'))
-        {
+
+        if (Options.Get('ougiRefresh') && (json.scenario[i].cmd == 'special' || json.scenario[i].cmd == 'special_npc')) {
           refresh = true;
         }
       }
-      if (refresh)
-      {
+
+      if (refresh) {
         //Message.Post(devID, {'refresh': true});
         Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
       }
@@ -1015,6 +1041,7 @@
       //   }
       // }
     },
+
     SetCurrentQuest: function(json) {
       if (json.progress_quest_info !== undefined) {
         var id = json.progress_quest_info[0].raid_id;
@@ -1029,10 +1056,13 @@
       }
       setQuestsJQuery();
     },
+
     UseSummon: function(json) {
     },
+
     Attack: function(json) {
     },
+
     AbandonQuest: function(payload) {
       var id = '' + payload.raid_id;
       if (quest !== null && quest.id === id) {
@@ -1047,8 +1077,10 @@
       }
       setQuestsJQuery();
     },
+
     CheckJoinedRaids: function(json) {
     },
+
     SetCoopCode: function(code, devID) {
       Message.Post(devID, {'setClick': {
         'id': '#quest-copy',
@@ -1059,12 +1091,14 @@
         'text': code + ' (Co-Op Room) '
       }});
     },
+
     UpdateInProgress: function(json, devID) {
       var inProgress = json.option.quest.init_list.progress_quest_info;
       if (inProgress !== undefined && inProgress.length > 0) {
         quest = createQuest(inProgress[0].raid_id, '#raid/', devID);
       }
     },
+
     CopyTweet: function(json) {
       if (Options.Get('copyJapaneseName') && json.tweet_mode === 0 && json.twitter.forced_message !== undefined) {
         var start = json.twitter.forced_message.indexOf('\n');
