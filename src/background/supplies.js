@@ -478,7 +478,7 @@
         saveSupply(updated[i]);
       }
     },
-    
+
     NpcUncap: function(json) {
       var updated = [];
       var category;
@@ -538,9 +538,10 @@
   };
 
   var updateSupply = function(id, category, number) {
-    var ret = false;
+    var ret    = false;
     var supply = supplies[category][id];
     var intNum = parseInt(number);
+
     if (intNum < 0) {
       intNum = 0;
     }
@@ -551,13 +552,13 @@
         intNum = 9999;
       }
       Message.PostAll({'setText': {
-        'id': '#supply-' + supply.sequence + '-' + id + '-count',
+        'id':    '#supply-' + supply.sequence + '-' + id + '-count',
         'value': intNum
       }});
       Message.PostAll({'setPlannerItemAmount': {
-        'id': id,
+        'id':       id,
         'sequence': supply.sequence,
-        'current': number
+        'current':  number
       }});
       //$supplyList.children('#supply-' + supply.sequence + '-' + id).children('.item-count').first().text(intNum);
       // for(var i = 0; i < supply.responseList.length; i++) {
@@ -581,31 +582,34 @@
 
   var newSupply = function(id, category, number, name, sequence) {
     supplies[category][id] = {
-      name: name,
-      count: parseInt(number),
+      name:     name,
+      count:    parseInt(number),
       sequence: sequence,
       //responseList: []
     };
+
     if (category !== 'recovery' && category !== 'powerUp' && category !== 'draw') {
       supplies.treasureHash[id] = category;
     }
+
+    // TODO: This looks like some weird hack
     var intNum = number;
     if (number > 9999) {
       intNum = 9999;
     }
 
     Message.PostAll({addItem: {
-      'id': id,
+      'id':       id,
       'category': category,
-      'number': intNum,
-      'name': name,
+      'number':   intNum,
+      'name':     name,
       'sequence': sequence,
-      'tooltip': createTooltip(name)
+      'tooltip':  createTooltip(name)
     }});
     Message.PostAll({'setPlannerItemAmount': {
-      'id': id,
+      'id':       id,
       'sequence': sequence,
-      'current': number
+      'current':  number
     }});
     if (responseList[category] !== undefined && responseList[category][id] !== undefined) {
       for (var i = 0; i < responseList[category][id].length; i++) {
@@ -622,14 +626,13 @@
       for (var i = build.start; i <= build.end; i++) {
         var items = plannersData[type][i].items;
         for (var j = 0; j < items.length; j++) {
-          var item = items[j];
+          var item     = items[j];
           var category = item.type;
           var id;
           if (category === 'currency') {
             id = item.category;
             category = 'currency';
-          }
-          else if (category === 'element') {
+          } else if (category === 'element') {
             id = elements[item.materialType][item.materialTier][build.element].id;
             category = elements[item.materialType][item.materialTier][build.element].category;
           } else if (category === 'class') {
@@ -639,7 +642,6 @@
             }
             category = classes[item.materialType][build.type].category;
           } else if (category === 'seraph') {
-
           } else if (category === 'bahamut') {
             id = bahamuts[build.type].id;
             category = bahamuts[build.type].category;
@@ -650,13 +652,14 @@
             id = item.id;
             category = item.category;
           }
+
           var hash = category + '-' + id;
           if (itemHash[hash] !== undefined) {
             response[itemHash[hash]].total += item.count;
           } else {
             itemHash[hash] = response.length;
-            var current = 0;
-            var tooltip = '';
+            var current  = 0;
+            var tooltip  = '';
             var sequence = 0;
             if (category === 'currency') {
               current = Profile.Get(id);
@@ -673,34 +676,37 @@
               tooltip = createTooltip(itemDatum.name);
               sequence = itemDatum.sequence;
             }
+
             response.push({
-              'id': id,
+              'id':       id,
               'category': category,
-              'current': current,
-              'total': item.count,
-              'tooltip': tooltip,
+              'current':  current,
+              'total':    item.count,
+              'tooltip':  tooltip,
               'sequence': sequence
             });
           }
         }
       }
+
       response.sort(function(a, b) {
         if (a.category === b.category) {
           return a.sequence - b.sequence;
         } else {
           var categoryHash = {
             treasure: 0,
-            raid: 1,
+            raid:     1,
             material: 2,
-            event: 3,
-            coop: 4,
-            misc: 5,
+            event:    3,
+            coop:     4,
+            misc:     5,
             recovery: 6,
-            powerUp: 7,
-            draw: 8,
-            other: 9,
+            powerUp:  7,
+            draw:     8,
+            other:    9,
             currency: 10
           };
+
           return categoryHash[a.category] - categoryHash[b.category];
         }
       });
@@ -753,74 +759,77 @@
     //   savePlanner(category);
     // }
 
+  // TODO: These could all be consolidated into a single function
+  // that simply looks through an array of `types`
+
   var createPlannerCurrency = function(category, count) {
     return {
-      'type': 'currency',
+      'type':     'currency',
       'category': category,
-      'count': count
+      'count':    count
     };
   };
 
   var createPlannerElement = function(materialType, materialTier, count) {
     return {
-      'type': 'element',
+      'type':         'element',
       'materialType': materialType,
       'materialTier': materialTier,
-      'count': count
+      'count':        count
     };
   };
 
   var createPlannerClass = function(materialType, count) {
     return {
-      'type': 'class',
+      'type':         'class',
       'materialType': materialType,
-      'count': count
+      'count':        count
     };
   };
 
   var createPlannerBahamut = function(materialType, count) {
     return {
-      'type': 'bahamut',
+      'type':         'bahamut',
       'materialType': materialType,
-      'count': count
+      'count':        count
     };
   };
   var createPlannerSeraph = function(materialType, count) {
     return {
-      'type': 'seraph',
+      'type':         'seraph',
       'materialType': materialType,
-      'count': count
+      'count':        count
     };
   };
 
   var createPlannerRevenantFiveStar = function(materialType, count) {
     return {
-      'type': 'revenantFiveStar',
+      'type':         'revenantFiveStar',
       'materialType': materialType,
-      'count': count
+      'count':        count
     };
   };
 
   var createPlannerSupply = function(category, id, count) {
     return {
-      'type': 'supply',
+      'type':     'supply',
       'category': category,
-      'id': id,
-      'count': count
+      'id':       id,
+      'count':    count
     };
   };
 
   var createSupplyInfo = function(category, id) {
     return {
       'category': category,
-      'id': id
+      'id':       id
     };
   };
 
   var plannersData = {
     'Revenant': [
       {
-        'name': 'Awakening',
+        'name':  'Awakening',
         'items': [
           createPlannerSupply('material', '1052', 50),
           createPlannerSupply('material', '1352', 50),
@@ -831,7 +840,7 @@
         ]
       },
       {
-        'name': 'Element',
+        'name':  'Element',
         'items': [
           createPlannerElement('orb', '0', 250),
           createPlannerElement('tome', '2', 250),
@@ -840,7 +849,7 @@
         ]
       },
       {
-        'name': 'Upgrade 1',
+        'name':  'Upgrade 1',
         'items': [
           createPlannerSupply('treasure', '2', 300),
           createPlannerSupply('treasure', '5', 100),
@@ -855,7 +864,7 @@
         ]
       },
       {
-        'name': 'Upgrade 2',
+        'name':  'Upgrade 2',
         'items': [
           createPlannerSupply('treasure', '6', 100),
           createPlannerSupply('treasure', '24', 100),
@@ -871,7 +880,7 @@
         ]
       },
       {
-        'name': 'Upgrade 3',
+        'name':  'Upgrade 3',
         'items': [
           createPlannerSupply('treasure', '3', 300),
           createPlannerSupply('treasure', '22', 100),
@@ -886,7 +895,7 @@
         ]
       },
       {
-        'name': 'Upgrade 4',
+        'name':  'Upgrade 4',
         'items': [
           createPlannerSupply('treasure', '17', 100),
           createPlannerSupply('treasure', '29', 100),
@@ -901,7 +910,7 @@
         ]
       },
       {
-        'name': 'Upgrade 5',
+        'name':  'Upgrade 5',
         'items': [
           createPlannerSupply('raid', '32', 20),
           createPlannerSupply('raid', '47', 20),
@@ -917,7 +926,7 @@
         ]
       },
       {
-        'name': 'Upgrade 6',
+        'name':  'Upgrade 6',
         'items': [
           createPlannerSupply('raid', '41', 3),
           createPlannerSupply('raid', '42', 3),
@@ -934,7 +943,7 @@
     ],
     'Class': [
       {
-        'name': 'Redeem',
+        'name':  'Redeem',
         'items': [
           createPlannerClass('creed', 1),
           createPlannerClass('distinction', 1),
@@ -942,7 +951,7 @@
         ]
       },
       {
-        'name': 'Forge',
+        'name':  'Forge',
         'items': [
           createPlannerClass('primal1', 70),
           createPlannerClass('primal2', 10),
@@ -957,7 +966,7 @@
         ]
       },
       {
-        'name': 'Rebuild',
+        'name':  'Rebuild',
         'items': [
           createPlannerClass('distinction', 10),
           createPlannerClass('stone', 256),
@@ -970,7 +979,7 @@
         ]
       },
       {
-        'name': 'Element',
+        'name':  'Element',
         'items': [
           createPlannerClass('distinction', 30),
           createPlannerClass('stone', 512),
@@ -985,7 +994,7 @@
     ],
     'Seraph': [
       {
-        'name': 'Forge',
+        'name':  'Forge',
         'items': [
           createPlannerElement('orb', '0', 5),
           createPlannerElement('tome', '0', 5),
@@ -996,7 +1005,7 @@
         ]
       },
       {
-        'name': 'Uncap 1',
+        'name':  'Uncap 1',
         'items': [
           createPlannerElement('orb', '0', 10),
           createPlannerElement('orb', '1', 3),
@@ -1008,7 +1017,7 @@
         ]
       },
       {
-        'name': 'Uncap 2',
+        'name':  'Uncap 2',
         'items': [
           createPlannerElement('orb', '1', 15),
           createPlannerElement('tome', '1', 20),
@@ -1021,7 +1030,7 @@
         ]
       },
       {
-        'name': 'Uncap 3',
+        'name':  'Uncap 3',
         'items': [
           createPlannerElement('treasure', '2', 50),
           createPlannerElement('treasure', '3', 80),
@@ -1034,7 +1043,7 @@
         ]
       },
       {
-        'name': 'SSR Upgrade',
+        'name':  'SSR Upgrade',
         'items': [
           createPlannerSupply('material', '2003', 2),
           createPlannerSupply('raid', '59', 2),
@@ -1051,13 +1060,13 @@
     ],
     'Bahamut': [
       {
-        'name': 'Core',
+        'name':  'Core',
         'items': [
           createPlannerSupply('raid', '59', 1)
         ]
       },
       {
-        'name': 'Nova',
+        'name':  'Nova',
         'items': [
           createPlannerSupply('raid', '59', 3),
           createPlannerSupply('material', '1111', 30),
@@ -1071,7 +1080,7 @@
         ]
       },
       {
-        'name': 'Coda',
+        'name':  'Coda',
         'items': [
           createPlannerSupply('raid', '79', 5),
           createPlannerSupply('material', '2003', 3)
@@ -1080,13 +1089,13 @@
     ],
     'Revenant 5*': [
       {
-        'name': 'Silver Forge',
+        'name':  'Silver Forge',
         'items': [
           createPlannerRevenantFiveStar('shard', 40)
         ]
       },
       {
-        'name': 'Silver 4*',
+        'name':  'Silver 4*',
         'items': [
           createPlannerRevenantFiveStar('stone', 300),
           createPlannerSupply('material', '5011', 300),
@@ -1098,7 +1107,7 @@
         ]
       },
       {
-        'name': 'Gold Forge',
+        'name':  'Gold Forge',
         'items': [
           createPlannerSupply('material', '1011', 250),
           createPlannerSupply('material', '1021', 250),
@@ -1106,16 +1115,13 @@
           createPlannerSupply('material', '1041', 250),
           createPlannerSupply('material', '1051', 250),
           createPlannerSupply('material', '1061', 250),
-
           createPlannerSupply('material', '1313', 250),
           createPlannerSupply('material', '1323', 250),
           createPlannerSupply('material', '1333', 250),
           createPlannerSupply('material', '1343', 250),
           createPlannerSupply('material', '1353', 250),
           createPlannerSupply('material', '1363', 250),
-
           createPlannerSupply('material', '1202', 1500),
-
           createPlannerSupply('powerUp', '20004', 1),
           createPlannerSupply('raid', '203', 10),
           createPlannerSupply('raid', '107', 10),
@@ -1125,7 +1131,7 @@
         ]
       },
       {
-        'name': 'Character 5*',
+        'name':  'Character 5*',
         'items': [
           createPlannerRevenantFiveStar('centrum', 30),
           createPlannerRevenantFiveStar('urn', 10),
@@ -1139,21 +1145,21 @@
   };
   var createClass = function(type, avenger, skofnung, nirvana, keraunos, oliver, hellion, ipetam, rosenbogen, langeleik, romulus, faust, murakumo, muramasa, ascalon, nebuchad, kapilavastu, misericorde) {
     return {
-      'Avenger': createPlannerSupply(type, avenger),
-      'Skofnung': createPlannerSupply(type, skofnung),
-      'Nirvana': createPlannerSupply(type, nirvana),
-      'Keraunos': createPlannerSupply(type, keraunos),
-      'Oliver': createPlannerSupply(type, oliver),
-      'Hellion': createPlannerSupply(type, hellion),
-      'Ipetam': createPlannerSupply(type, ipetam),
-      'Rosenbogen': createPlannerSupply(type, rosenbogen),
-      'Langeleik': createPlannerSupply(type, langeleik),
-      'Romulus': createPlannerSupply(type, romulus),
-      'Faust': createPlannerSupply(type, faust),
-      'Murakumo': createPlannerSupply(type, murakumo),
-      'Muramasa': createPlannerSupply(type, muramasa),
-      'Ascalon': createPlannerSupply(type, ascalon),
-      'Nebuchad': createPlannerSupply(type, nebuchad),
+      'Avenger':     createPlannerSupply(type, avenger),
+      'Skofnung':    createPlannerSupply(type, skofnung),
+      'Nirvana':     createPlannerSupply(type, nirvana),
+      'Keraunos':    createPlannerSupply(type, keraunos),
+      'Oliver':      createPlannerSupply(type, oliver),
+      'Hellion':     createPlannerSupply(type, hellion),
+      'Ipetam':      createPlannerSupply(type, ipetam),
+      'Rosenbogen':  createPlannerSupply(type, rosenbogen),
+      'Langeleik':   createPlannerSupply(type, langeleik),
+      'Romulus':     createPlannerSupply(type, romulus),
+      'Faust':       createPlannerSupply(type, faust),
+      'Murakumo':    createPlannerSupply(type, murakumo),
+      'Muramasa':    createPlannerSupply(type, muramasa),
+      'Ascalon':     createPlannerSupply(type, ascalon),
+      'Nebuchad':    createPlannerSupply(type, nebuchad),
       'Kapilavastu': createPlannerSupply(type, kapilavastu),
       'Misericorde': createPlannerSupply(type, misericorde)
     };
@@ -1161,16 +1167,16 @@
 
   var createRevenantFiveStar = function(type, uno, song, sarasa, quatre, funf, six, siete, octo, nio, esser) {
     return {
-      'Uno': createPlannerSupply(type, uno),
-      'Song': createPlannerSupply(type, song),
+      'Uno':    createPlannerSupply(type, uno),
+      'Song':   createPlannerSupply(type, song),
       'Sarasa': createPlannerSupply(type, sarasa),
       'Quatre': createPlannerSupply(type, quatre),
-      'Funf': createPlannerSupply(type, funf),
-      'Six': createPlannerSupply(type, six),
-      'Siete': createPlannerSupply(type, siete),
-      'Octo': createPlannerSupply(type, octo),
-      'Nio': createPlannerSupply(type, nio),
-      'Esser': createPlannerSupply(type, esser),
+      'Funf':   createPlannerSupply(type, funf),
+      'Six':    createPlannerSupply(type, six),
+      'Siete':  createPlannerSupply(type, siete),
+      'Octo':   createPlannerSupply(type, octo),
+      'Nio':    createPlannerSupply(type, nio),
+      'Esser':  createPlannerSupply(type, esser),
     };
   };
 
@@ -1471,214 +1477,214 @@
   var elements = {
     'orb': {
       '0': {
-        'Fire': createSupplyInfo('material', '1011'),
+        'Fire':  createSupplyInfo('material', '1011'),
         'Water': createSupplyInfo('material', '1021'),
         'Earth': createSupplyInfo('material', '1031'),
-        'Wind': createSupplyInfo('material', '1041'),
+        'Wind':  createSupplyInfo('material', '1041'),
         'Light': createSupplyInfo('material', '1051'),
         'Dark' : createSupplyInfo('material', '1061')
       },
       '1': {
-        'Fire': createSupplyInfo('material', '1012'),
+        'Fire':  createSupplyInfo('material', '1012'),
         'Water': createSupplyInfo('material', '1022'),
         'Earth': createSupplyInfo('material', '1032'),
-        'Wind': createSupplyInfo('material', '1042'),
+        'Wind':  createSupplyInfo('material', '1042'),
         'Light': createSupplyInfo('material', '1052'),
         'Dark' : createSupplyInfo('material', '1062')
       }
     },
     'tome': {
       '0': {
-        'Fire': createSupplyInfo('material', '1311'),
+        'Fire':  createSupplyInfo('material', '1311'),
         'Water': createSupplyInfo('material', '1321'),
         'Earth': createSupplyInfo('material', '1331'),
-        'Wind': createSupplyInfo('material', '1341'),
+        'Wind':  createSupplyInfo('material', '1341'),
         'Light': createSupplyInfo('material', '1351'),
         'Dark' : createSupplyInfo('material', '1361')
       },
       '1': {
-        'Fire': createSupplyInfo('material', '1312'),
+        'Fire':  createSupplyInfo('material', '1312'),
         'Water': createSupplyInfo('material', '1322'),
         'Earth': createSupplyInfo('material', '1332'),
-        'Wind': createSupplyInfo('material', '1342'),
+        'Wind':  createSupplyInfo('material', '1342'),
         'Light': createSupplyInfo('material', '1352'),
         'Dark' : createSupplyInfo('material', '1362')
       },
       '2': {
-        'Fire': createSupplyInfo('material', '1313'),
+        'Fire':  createSupplyInfo('material', '1313'),
         'Water': createSupplyInfo('material', '1323'),
         'Earth': createSupplyInfo('material', '1333'),
-        'Wind': createSupplyInfo('material', '1343'),
+        'Wind':  createSupplyInfo('material', '1343'),
         'Light': createSupplyInfo('material', '1353'),
         'Dark' : createSupplyInfo('material', '1363')
       }
     },
     'scale': {
       '0': {
-        'Fire': createSupplyInfo('material', '1111'),
+        'Fire':  createSupplyInfo('material', '1111'),
         'Water': createSupplyInfo('material', '1121'),
         'Earth': createSupplyInfo('material', '1131'),
-        'Wind': createSupplyInfo('material', '1141'),
+        'Wind':  createSupplyInfo('material', '1141'),
         'Light': createSupplyInfo('material', '1151'),
         'Dark' : createSupplyInfo('material', '1161')
       }
     },
     'magna': {
       '0': { //silver anima
-        'Fire': createSupplyInfo('raid', '11'),
+        'Fire':  createSupplyInfo('raid', '11'),
         'Water': createSupplyInfo('raid', '12'),
         'Earth': createSupplyInfo('raid', '13'),
-        'Wind': createSupplyInfo('raid', '10'),
+        'Wind':  createSupplyInfo('raid', '10'),
         'Light': createSupplyInfo('raid', '25'),
         'Dark' : createSupplyInfo('raid', '30')
       },
       '1': { //omega anima
-        'Fire': createSupplyInfo('raid', '19'),
+        'Fire':  createSupplyInfo('raid', '19'),
         'Water': createSupplyInfo('raid', '20'),
         'Earth': createSupplyInfo('raid', '21'),
-        'Wind': createSupplyInfo('raid', '18'),
+        'Wind':  createSupplyInfo('raid', '18'),
         'Light': createSupplyInfo('raid', '26'),
         'Dark' : createSupplyInfo('raid', '31')
       },
       '2': { //fragment
-        'Fire': createSupplyInfo('raid', '47'),
+        'Fire':  createSupplyInfo('raid', '47'),
         'Water': createSupplyInfo('raid', '48'),
         'Earth': createSupplyInfo('raid', '49'),
-        'Wind': createSupplyInfo('raid', '32'),
+        'Wind':  createSupplyInfo('raid', '32'),
         'Light': createSupplyInfo('raid', '50'),
         'Dark' : createSupplyInfo('raid', '51')
       },
       '3': { //true anima
-        'Fire': createSupplyInfo('raid', '41'),
+        'Fire':  createSupplyInfo('raid', '41'),
         'Water': createSupplyInfo('raid', '42'),
         'Earth': createSupplyInfo('raid', '43'),
-        'Wind': createSupplyInfo('raid', '44'),
+        'Wind':  createSupplyInfo('raid', '44'),
         'Light': createSupplyInfo('raid', '45'),
         'Dark' : createSupplyInfo('raid', '46')
       },
       '4': { //centrum
-        'Fire': createSupplyInfo('raid', '101'),
+        'Fire':  createSupplyInfo('raid', '101'),
         'Water': createSupplyInfo('raid', '102'),
         'Earth': createSupplyInfo('raid', '103'),
-        'Wind': createSupplyInfo('raid', '104'),
+        'Wind':  createSupplyInfo('raid', '104'),
         'Light': createSupplyInfo('raid', '105'),
         'Dark' : createSupplyInfo('raid', '106')
       },
       '6': { //tier 2 omega anima
-        'Fire': createSupplyInfo('raid', '76'),
+        'Fire':  createSupplyInfo('raid', '76'),
         'Water': createSupplyInfo('raid', '73'),
         'Earth': createSupplyInfo('raid', '74'),
-        'Wind': createSupplyInfo('raid', '77'),
+        'Wind':  createSupplyInfo('raid', '77'),
         'Light': createSupplyInfo('raid', '78'),
         'Dark' : createSupplyInfo('raid', '75')
       },
       '7': { //tier 3 anima
-        'Fire': createSupplyInfo('raid', '85'),
+        'Fire':  createSupplyInfo('raid', '85'),
         'Water': createSupplyInfo('raid', '68'),
         'Earth': createSupplyInfo('raid', '87'),
-        'Wind': createSupplyInfo('raid', '92'),
+        'Wind':  createSupplyInfo('raid', '92'),
         'Light': createSupplyInfo('raid', '67'),
         'Dark' : createSupplyInfo('raid', '72')
       }
     },
     'quartz': {
       '0': {
-        'Fire': createSupplyInfo('material', '5011'),
+        'Fire':  createSupplyInfo('material', '5011'),
         'Water': createSupplyInfo('material', '5021'),
         'Earth': createSupplyInfo('material', '5031'),
-        'Wind': createSupplyInfo('material', '5041'),
+        'Wind':  createSupplyInfo('material', '5041'),
         'Light': createSupplyInfo('material', '5051'),
         'Dark' : createSupplyInfo('material', '5061')
       }
     },
     'primal': {
       '2': {
-        'Fire': createSupplyInfo('event', '10018'),
+        'Fire':  createSupplyInfo('event', '10018'),
         'Water': createSupplyInfo('event', '10005'),
         'Earth': createSupplyInfo('event', '10011'),
-        'Wind': createSupplyInfo('event', '10027'),
+        'Wind':  createSupplyInfo('event', '10027'),
         'Light': createSupplyInfo('event', '10046'),
         'Dark' : createSupplyInfo('event', '10065')
       },
       '3': {
-        'Fire': createSupplyInfo('event', '10019'),
+        'Fire':  createSupplyInfo('event', '10019'),
         'Water': createSupplyInfo('event', '10006'),
         'Earth': createSupplyInfo('event', '10012'),
-        'Wind': createSupplyInfo('event', '10028'),
+        'Wind':  createSupplyInfo('event', '10028'),
         'Light': createSupplyInfo('event', '10047'),
         'Dark' : createSupplyInfo('event', '10066')
       }
     },
     'grimoire': {
       '0': {
-        'Fire': createSupplyInfo('coop', '20711'),
+        'Fire':  createSupplyInfo('coop', '20711'),
         'Water': createSupplyInfo('coop', '20721'),
         'Earth': createSupplyInfo('coop', '20731'),
-        'Wind': createSupplyInfo('coop', '20741'),
+        'Wind':  createSupplyInfo('coop', '20741'),
         'Light': createSupplyInfo('coop', '20711'),
         'Dark' : createSupplyInfo('coop', '20721')
       },
       '1': {
-        'Fire': createSupplyInfo('coop', '20711'),
+        'Fire':  createSupplyInfo('coop', '20711'),
         'Water': createSupplyInfo('coop', '20721'),
         'Earth': createSupplyInfo('coop', '20731'),
-        'Wind': createSupplyInfo('coop', '20741'),
+        'Wind':  createSupplyInfo('coop', '20741'),
         'Light': createSupplyInfo('coop', '20741'),
         'Dark' : createSupplyInfo('coop', '20731')
       }
     },
     'primarch': {
       '0': {
-        'Fire': createSupplyInfo('material', '5211'),
+        'Fire':  createSupplyInfo('material', '5211'),
         'Water': createSupplyInfo('material', '5221'),
         'Earth': createSupplyInfo('material', '5231'),
-        'Wind': createSupplyInfo('material', '5241'),
+        'Wind':  createSupplyInfo('material', '5241'),
       },
       '1': {
-        'Fire': createSupplyInfo('raid', '506'),
+        'Fire':  createSupplyInfo('raid', '506'),
         'Water': createSupplyInfo('raid', '507'),
         'Earth': createSupplyInfo('raid', '508'),
-        'Wind': createSupplyInfo('raid', '509'),
+        'Wind':  createSupplyInfo('raid', '509'),
       }
     },
     'fragment': {
       '0': {
-        'Fire': createSupplyInfo('material', '5111'),
+        'Fire':  createSupplyInfo('material', '5111'),
         'Water': createSupplyInfo('material', '5121'),
         'Earth': createSupplyInfo('material', '5131'),
-        'Wind': createSupplyInfo('material', '5141'),
+        'Wind':  createSupplyInfo('material', '5141'),
       }
     },
     'treasure': {
       '0': {
-        'Fire': createSupplyInfo('treasure', '4'),
+        'Fire':  createSupplyInfo('treasure', '4'),
         'Water': createSupplyInfo('treasure', '6'),
         'Earth': createSupplyInfo('treasure', '8'),
-        'Wind': createSupplyInfo('treasure', '2'),
+        'Wind':  createSupplyInfo('treasure', '2'),
       },
       '1': {
-        'Fire': createSupplyInfo('treasure', '5'),
+        'Fire':  createSupplyInfo('treasure', '5'),
         'Water': createSupplyInfo('treasure', '7'),
         'Earth': createSupplyInfo('treasure', '9'),
-        'Wind': createSupplyInfo('treasure', '3'),
+        'Wind':  createSupplyInfo('treasure', '3'),
       },
       '2': {
-        'Fire': createSupplyInfo('treasure', '15'),
+        'Fire':  createSupplyInfo('treasure', '15'),
         'Water': createSupplyInfo('treasure', '16'),
         'Earth': createSupplyInfo('treasure', '17'),
-        'Wind': createSupplyInfo('treasure', '14'),
+        'Wind':  createSupplyInfo('treasure', '14'),
       },
       '3': {
-        'Fire': createSupplyInfo('treasure', '33'),
+        'Fire':  createSupplyInfo('treasure', '33'),
         'Water': createSupplyInfo('treasure', '23'),
         'Earth': createSupplyInfo('treasure', '52'),
-        'Wind': createSupplyInfo('treasure', '38'),
+        'Wind':  createSupplyInfo('treasure', '38'),
       },
       '4': {
-        'Fire': createSupplyInfo('treasure', '120'),
+        'Fire':  createSupplyInfo('treasure', '120'),
         'Water': createSupplyInfo('treasure', '99'),
         'Earth': createSupplyInfo('treasure', '124'),
-        'Wind': createSupplyInfo('treasure', '91'),
+        'Wind':  createSupplyInfo('treasure', '91'),
       },
     },
   };
@@ -1686,18 +1692,19 @@
 
   };
   var bahamuts = {
-    'Sabre': createSupplyInfo('raid', '47'),
+    'Sabre':  createSupplyInfo('raid', '47'),
     'Dagger': createSupplyInfo('raid', '51'),
-    'Spear': createSupplyInfo('raid', '32'),
-    'Axe': createSupplyInfo('raid', '49'),
-    'Staff': createSupplyInfo('raid', '50'),
-    'Gun': createSupplyInfo('raid', '47'),
-    'Bow': createSupplyInfo('raid', '32'),
-    'Melee': createSupplyInfo('raid', '49'),
-    'Harp': createSupplyInfo('raid', '48'),
+    'Spear':  createSupplyInfo('raid', '32'),
+    'Axe':    createSupplyInfo('raid', '49'),
+    'Staff':  createSupplyInfo('raid', '50'),
+    'Gun':    createSupplyInfo('raid', '47'),
+    'Bow':    createSupplyInfo('raid', '32'),
+    'Melee':  createSupplyInfo('raid', '49'),
+    'Harp':   createSupplyInfo('raid', '48'),
     'Katana': createSupplyInfo('raid', '48'),
   };
 
+  // TODO: Move into a JSON dictionary, or even better, get from gbf.wiki
   var tooltips = {
     'Satin Feather': ['1: Scattered Cargo'],
     'Zephyr Feather': ['1: Scattered Cargo'],
@@ -1731,72 +1738,73 @@
     'Bastion Block': ['80-4', '81-1', '81-4', '82-4'],
     'Raw Gemstone': ['84-4']
   };
+
   var weaponSupplyInfo = {
     'powerUp': {
       '20002': {
-        'name': 'Red Steel Brick',
+        'name':     'Red Steel Brick',
         'sequence': '120002'
       },
       '20003': {
-        'name': 'Steel Brick',
+        'name':     'Steel Brick',
         'sequence': '120003'
       },
       '20004': {
-        'name': 'Gold Brick',
+        'name':     'Gold Brick',
         'sequence': '120004'
       },
       '20005': {
-        'name': 'Damascus Ingot',
+        'name':     'Damascus Ingot',
         'sequence': '120005'
       },
       '20012': {
-        'name': 'Brightstone',
+        'name':     'Brightstone',
         'sequence': '120012'
       },
       '20013': {
-        'name': 'Moonlight Stone',
+        'name':     'Moonlight Stone',
         'sequence': '120013'
       },
       '20014': {
-        'name': 'Sunlight Stone',
+        'name':     'Sunlight Stone',
         'sequence': '120014'
       }
     },
     'treasure': {
       '2': {
-        'name': 'Satin Feather',
+        'name':     'Satin Feather',
         'sequence': 110
       },
       '3': {
-        'name': 'Zephyr Feather',
+        'name':     'Zephyr Feather',
         'sequence': 120
       },
       '4': {
-        'name': 'Fine Sand Bottle',
+        'name':     'Fine Sand Bottle',
         'sequence': 210
       },
       '5': {
-        'name': 'Untamed Flame',
+        'name':     'Untamed Flame',
         'sequence': 220
       },
       '6': {
-        'name': 'Fresh Water Jug',
+        'name':     'Fresh Water Jug',
         'sequence': 310
       },
       '7': {
-        'name': 'Soothing Splash',
+        'name':     'Soothing Splash',
         'sequence': 320
       },
       '8': {
-        'name': 'Rough Stone',
+        'name':     'Rough Stone',
         'sequence': 410
       },
       '9': {
-        'name': 'Coarse Alluvium',
+        'name':     'Coarse Alluvium',
         'sequence': 420
       },
       '14': {
-        'name': 'Flying Sprout',
+        'name':     'Flying Sprout',
         'sequence': 130
       },
       '15': {
