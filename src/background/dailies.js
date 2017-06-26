@@ -4,16 +4,17 @@
   var monthlyNames = ['moons'];
   var drawCount    = 101;
   var coopDailies  = [];
-  var tweet = true;
-  var moons = {
+  var tweet        = true;
+  var coopNum      = 3;
+  var isHL         = false;
+  var moons        = {
     '30031': 1,
     '30032': 1,
     '30033': 1
   };
-  var coopNum = 3;
 
   //var defenseRank = 1;
-  var isHL = false;
+
   // var defenseShop = {
   //   '1356': 5,
   //   '1357': 5,
@@ -203,7 +204,7 @@
     //   checkDefenseShop();
     // }
 
-
+  // TODO: Move a lot of the above into dictionaries
   window.Dailies = {
     Initialize: function(callback) {
 
@@ -308,49 +309,50 @@
       //       array.push(['renown', key], dailies.renown[key]);
       //   });
       increaseRenown(Options.Get('increasedRenownLimit'));
-      Message.PostAll({'hideObject': {
-        'id': '#dailies-freeSingleRoll-Panel',
+      Message.PostAll({ 'hideObject': {
+        'id':    '#dailies-freeSingleRoll-Panel',
         'value': !Options.Get('freeSingleRoll')
-      }});
-      Message.PostAll({'hideObject': {
-        'id': '#dailies-primarchs-Panel',
+      } });
+      Message.PostAll({ 'hideObject': {
+        'id':    '#dailies-primarchs-Panel',
         'value': !Options.Get('primarchDaily')
-      }});
+      } });
 
       var response = [];
       var checking = false;
       if (enabledDistinctionList.length == 0) {
         checking = true;
       }
+
       Object.keys(dailies.distinctions).forEach(function(key) {
         var enabled = Options.Get(key);
         if (checking && enabled) {
           enabledDistinctionList.push(key);
         }
 
-        response.push({'addDistinction': {
+        response.push({ 'addDistinction': {
           'id':        key,
           'amount':    dailies.distinctions[key],
           'max':       '1',
           'isEnabled': enabled
-        }});
+        } });
       });
 
-      response.push({'setHeight': {
+      response.push({ 'setHeight': {
         'id':    '#daily-distinction-list',
         'value': Math.ceil(enabledDistinctionList.length / 4) * 47
-      }});
+      } });
 
       if (enabledDistinctionList.length === 0 || !isHL) {
-        response.push({'hideObject': {
+        response.push({ 'hideObject': {
           'id':    '#distinction-dailies',
           'value': true
-        }});
+        } });
       } else {
-        response.push({'hideObject': {
+        response.push({ 'hideObject': {
           'id':   '#distinction-dailies',
           'value': false
-        }});
+        } });
       }
 
       Object.keys(dailies).forEach(function(key) {
@@ -358,10 +360,10 @@
       });
 
       response = response.concat(recursiveSearch(dailies, []));
-      response.push({'hideObject': {
+      response.push({ 'hideObject': {
         'id':    '#weekly-prestige',
         'value': !isHL
-      }});
+      } });
 
       return response;
     },
@@ -431,7 +433,7 @@
       var key;
       for (var i = 0; i < json.daily_mission.length; i++) {
         description = json.daily_mission[i].description;
-        key = '' + i;
+        key         = '' + i;
         array.push(['coop', key, 'raw'], description);
         array.push(['coop', key, 'quest'], parseDescription(description));
         array.push(['coop', key, 'max'], parseInt(json.daily_mission[i].max_progress));
@@ -497,6 +499,7 @@
       array.push(['renown', '' + path.param.mbp_id], parseInt(path.data.weekly.get_number));
       setDailies(array);
     },
+
     CheckTweet: function(json) {
       if (json.twitter.campaign_info.is_avail_twitter !== undefined) {
         if (json.twitter.campaign_info.is_avail_twitter === true) {
@@ -506,18 +509,21 @@
         }
       }
     },
+
     UseTweet: function(json) {
       if (json.reward_status === true) {
         APBP.SetMax();
         setDailies([['tweet'], false]);
       }
     },
+
     PurchaseMoon: function(json) {
       var id = json.article.item_ids[0];
       if (id === '30031' || id === '30032' || id === '30033') {
         setDailies(['moons', id], 0);
       }
     },
+
     CheckMoons: function(json) {
       var id;
       var amounts = { '30031': 0, '30032': 0, '30033': 0 };
@@ -531,6 +537,7 @@
         setDailies([['moons', key], amounts[key]]);
       });
     },
+
     CheckGacha: function(json) {
       var canRoll = false;
       if (json.enable_term_free_legend !== undefined && json.enable_term_free_legend !== false) {
@@ -540,15 +547,18 @@
       }
       setDailies([['freeSingleRoll'], canRoll]);
     },
+
     RollCampaign: function(json, header) {
       setDailies([['freeSingleRoll'], false]);
     },
+
     PurchaseDistinction: function(json) {
       var id = json.article.item_ids[0];
       if (dailies.distinctions[id] !== undefined) {
         setDailies([['distinctions', id], 0]);
       }
     },
+
     SetDistinctions: function(json) {
       var keys  = Object.keys(json.list);
       var ids   = {};
@@ -593,10 +603,12 @@
         setDailies(array);
       }
     },
+
     SetPrimarchs: function(json) {
       var primarchJson = json.option.quest.extra_normal_quest.quest_list.host_group['3000'];
       setDailies([['primarchs'], primarchJson.group_limited_count]);
     },
+
     DecPrimarchs: function(payload) {
       if (primarchHash['' + payload.quest_id]) {
         setDailies([['primarchs'], dailies['primarchs'] - 1]);
@@ -635,6 +647,7 @@
     //   });
     // },
   };
+
   var setDailies = function(array, override) {//category, value) {
     var category;
     var value;
@@ -722,6 +735,7 @@
       'value': collapse
     }};
   };
+  
   var getJquery = function(category) {
     var id    = '#dailies';
     var value = dailies;

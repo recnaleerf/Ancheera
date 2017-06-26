@@ -1,29 +1,31 @@
 (function() {
   var supplies = {
     treasureHash: {},
-    recovery: {},
-    powerUp: {},
-    treasure: {},
-    raid: {},
-    material: {},
-    event: {},
-    coop: {},
-    misc: {},
-    draw: {},
-    other: {}
+    recovery:     {},
+    powerUp:      {},
+    treasure:     {},
+    raid:         {},
+    material:     {},
+    event:        {},
+    coop:         {},
+    misc:         {},
+    draw:         {},
+    other:        {}
   };
+
   var responseList = {
   };
+
   var planners = {
     current: null,
   };
 
   var updatedSupplies = [];
-  var sortedSupplies = [];
-  var filter = 'all';
-  var search = '';
-  var nextUncap = null;
-  var nextNpcUncap = null;
+  var sortedSupplies  = [];
+  var filter          = 'all';
+  var search          = '';
+  var nextUncap       = null;
+  var nextNpcUncap    = null;
 
   // var $supplyList = $('#supply-list');
   // var $supplyItem = $supplyList.find('.supply-item').first().clone();
@@ -68,16 +70,19 @@
             }
           }
         }
+
         if (callback !== undefined) {
           callback();
         }
       });
+
       Storage.GetMultiple(['planners'], function(response) {
         if (response['planners'] !== undefined) {
           planners = response['planners'].planners;
         }
       });
     },
+
     InitializeDev: function() {
       var response = [];
       var item;
@@ -96,6 +101,7 @@
           });
         }
       });
+
       var type = planners.current;
       if (type && planners[type]) {
         response.push({'setPlannerDropdowns': {type: type, build: planners[type]}});
@@ -103,6 +109,7 @@
       }
       return response;
     },
+
     Get: function(id, category, response) {
       if (response !== undefined) {
         if (responseList[category] === undefined) {
@@ -120,7 +127,6 @@
       }
 
       if (supplies[category][id] !== undefined) {
-
         // if(response !== undefined) {
         //   supplies[category][id].responseList.push(response);
         // }
@@ -128,18 +134,21 @@
       }
       return 0;
     },
+
     Set: function(id, item_kind, amount) {
       var category = getCategory(id, item_kind);
       if (category !== undefined) {
         updateSupply(id, category, amount);
       }
     },
+
     Increment: function(id, item_kind, amount) {
       var category = getCategory(id, item_kind);
       if (category !== undefined) {
         updateSupply(id, category, supplies[category][id].count + amount);
       }
     },
+
     SetRecovery: function(json) {
       if (json !== undefined) {
         var updated = false;
@@ -159,6 +168,7 @@
         }
       }
     },
+
     SetPowerUp: function(json) {
       if (json !== undefined) {
         var updated = false;
@@ -178,16 +188,17 @@
         }
       }
     },
+
     SetTreasure: function(json) {
       if (json !== undefined) {
         var categories = ['treasure', 'raid', 'material', 'event', 'coop', 'misc'];
         var updated = {
           'treasure': false,
-          'raid': false,
+          'raid':     false,
           'material': false,
-          'event': false,
-          'coop': false,
-          'misc': false
+          'event':    false,
+          'coop':     false,
+          'misc':     false
         };
         var id;
         var category;
@@ -208,6 +219,7 @@
           } else {
             category = 'misc';
           }
+
           if (supplies[category][id] !== undefined) {
             if (updateSupply(id, category, json[i].number)){
               updated[category] = true;
@@ -216,6 +228,7 @@
             updated[category] = newSupply(id, category, json[i].number, json[i].name, seq_id);
           }
         }
+
         for (var i = 0; i < categories.length; i++) {
           if (updated[categories[i]]) {
             saveSupply(categories[i]);
@@ -223,6 +236,7 @@
         }
       }
     },
+
     SetDraw: function(json) {
       if (json !== undefined) {
         var updated = false;
@@ -242,8 +256,10 @@
         }
       }
     },
+
     SetOther: function(json) {
     },
+
     GetLoot: function(json) {
       var item;
       var updated =[];
@@ -263,6 +279,7 @@
           }
         }
       }
+
       list = json.rewards.article_list;
       console.log(list);
       for (var property in list) {
@@ -277,11 +294,13 @@
           }
         }
       }
+
       for (var i = 0; i < updated.length; i++) {
         console.log(updated);
         saveSupply(updated[i]);
       }
     },
+
     GetGift: function(json) {
       var id = json.item_id;
       var category = getCategory(id, json.item_kind_id);
@@ -289,6 +308,7 @@
         saveSupply(category);
       }
     },
+
     GetAllGifts: function(json) {
       var item;
       var category;
@@ -306,16 +326,18 @@
         saveSupply(updated[i]);
       }
     },
+
     PurchaseItem: function(json) {
       if (json.article.item_ids.length > 0 && json.article.is_get.result) {
-        var updated = [];
-        var id = json.article.item_ids[0];
+        var updated  = [];
+        var id       = json.article.item_ids[0];
         var category = getCategory(id, json.article.item_kind[0]);
         if (category !== undefined && updateSupply(id, category, parseInt(json.article.is_get.item_cnt) + parseInt(json.purchase_number))) {
           if (updated.indexOf(category) === -1) {
             updated.push(category);
           }
         }
+
         var article;
         var articleNumber;
         for (var i = 0; i < 4; i++) {
@@ -331,24 +353,28 @@
             }
           }
         }
+
         for (var i = 0; i < updated.length; i++) {
           saveSupply(updated[i]);
         }
       }
     },
+
     UseRecovery: function(json, payload) {
       if (json.success && json.result.use_flag) {
         var id = payload.item_id.toString();
         incrementSupply(id, 'recovery', -payload.num);
       }
     },
+
     SellCoop: function(json, payload) {
       if (json.success) {
-        var id = payload.item_id;
+        var id  = payload.item_id;
         var amt = parseInt(payload.number);
         incrementSupply(id, 'coop', - amt);
         saveSupply('coop');
         var lupi;
+
         switch (id) {
           //bronze
         case '20001':
@@ -369,6 +395,7 @@
           lupi = 5000;
           break;
         }
+
         Profile.AddLupi(lupi * amt);
       }
     },
@@ -378,7 +405,7 @@
       var id;
       var category;
       for (var i = 0; i < json.treasure_id.length; i++) {
-        id = json.treasure_id[i];
+        id       = json.treasure_id[i];
         category = getCategory(id, '10');
         if (category !== undefined && updateSupply(id, category, json.num[i])) {
           if (updated.indexOf(category) === -1) {
@@ -392,12 +419,13 @@
     },
 
     BuyCasino: function(json, payload) {
-      var id = json.article.item_ids[0];
+      var id       = json.article.item_ids[0];
       var category = getCategory(id, json.article.item_kind[0]);
       if (incrementSupply(id, category, parseInt(payload.num))) {
         saveSupply();
       }
     },
+
     CheckUncapItem: function(json) {
       var updated = false;
       var item;
@@ -407,25 +435,29 @@
           updated = true;
         }
       }
+
       if (updated) {
         saveSupply('powerUp');
       }
     },
+
     SetUncapItem: function(json) {
       nextUncap = json.item_id;
-
     },
+
     SetUncap: function(json) {
       nextUncap = null;
     },
+
     Uncap: function(json) {
       if (nextUncap !== null && nextUncap !== undefined) {
         incrementSupply(nextUncap, 'powerUp', -1);
       }
     },
+
     SetNpcUncap: function(json) {
-      nextNpcUncap = [];
-      var updated = [];
+      nextNpcUncap = []; // TODO: what are these next uncaps globals?
+      var updated  = [];
       var item;
       var category;
       for (var i = 0; i < json.requirements.length; i++) {
@@ -446,6 +478,7 @@
         saveSupply(updated[i]);
       }
     },
+    
     NpcUncap: function(json) {
       var updated = [];
       var category;

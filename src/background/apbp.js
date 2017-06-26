@@ -275,13 +275,14 @@
       responseAP[i](curr);
     }
     currAP = parseInt(curr);
-    maxAP = parseInt(max);
+    maxAP  = parseInt(max);
+
     Message.PostAll({setText: {
       'id': '#ap-number',
       'value': 'AP: ' + currAP + '/' + maxAP
     }});
-      'id': '#ap-bar',
-      Message.PostAll({setBar: {
+    Message.PostAll({setBar: {
+      'id':    '#ap-bar',
       'value': ((currAP / maxAP) * 100) + '%'
     }});
     // $apNumber.text('AP: ' + currAP + '/' + maxAP);
@@ -290,7 +291,8 @@
 
   var setBP = function(curr, max) {
     currBP = parseInt(curr);
-    maxBP = parseInt(max);
+    maxBP  = parseInt(max);
+
     Message.PostAll({setText: {
       'id': '#bp-number',
       'value': 'EP: ' + currBP + '/' + maxBP

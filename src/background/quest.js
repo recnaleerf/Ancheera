@@ -1539,6 +1539,7 @@
         }});
       }
     }
+    
     for (var i = 0; i < completedRaidList.length; i++) {
       var id = completedRaidList[i];
       if (Options.Get(id)) {

@@ -64,6 +64,7 @@
     }
   };
 
+  // TODO: (O_o); wut
   Options.Initialize(function() {
     Dailies.Initialize(function() {
       Quest.Initialize(function() {
@@ -176,16 +177,14 @@
     if (tab.url.indexOf('gbf.game.mbga.jp') !== -1) {
       if (currURL !== tab.url) {
         pageLoaded = false;
-        currURL = tab.url;
+        currURL    = tab.url;
       }
+
       if (currURL === tab.url && pageLoaded) {
         chrome.tabs.sendMessage(tabId, {pageUpdate: tab.url});
       }
-
     }
   });
-
-
 
   var connections = {};
 
@@ -197,7 +196,7 @@
       }
       if (message.initialize) {
         var response = [];
-        response[0] = {
+        response[0]  = {
           'setTheme': Options.Get('windowTheme')
         };
         response = response.concat(Profile.InitializeDev());
@@ -236,6 +235,7 @@
         });
         return;
       }
+
       if (message.openURL) {
         chrome.tabs.update(message.id, {'url': message.openURL});
         // chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
@@ -289,10 +289,10 @@
       if (message.request) {
         //verify current ap/ep
         if (message.request.url.indexOf('/user/status?') !== -1 ||
-         message.request.url.indexOf('/user/data_assets?') !== -1 ||
-         message.request.url.indexOf('/user/content/index?') !== -1 ||
-         message.request.url.indexOf('/quest/content/') !== -1 ||
-         message.request.url.indexOf('/coopraid/content/') !== -1) {
+            message.request.url.indexOf('/user/data_assets?') !== -1 ||
+            message.request.url.indexOf('/user/content/index?') !== -1 ||
+            message.request.url.indexOf('/quest/content/') !== -1 ||
+            message.request.url.indexOf('/coopraid/content/') !== -1) {
           APBP.VerifyAPBP(message.request.response);
           Profile.SetLupiCrystal(message.request.response);
         }
@@ -546,8 +546,8 @@
         }
       }
     };
-    port.onMessage.addListener(extensionListener);
 
+    port.onMessage.addListener(extensionListener);
     port.onDisconnect.addListener(function(port) {
       port.onMessage.removeListener(extensionListener);
 
@@ -579,6 +579,8 @@
   //     return true;
   // });
 
+  // TODO: Why is window.Message defined in background and not message.js?
+  // or is it getting redefined?
   window.Message = {
     PostAll: function(message) {
       Object.keys(connections).forEach(function(key) {
@@ -587,6 +589,7 @@
         }
       });
     },
+
     Post: function(id, message) {
       if (connections[id] !== undefined) {
         if (message !== undefined) {
@@ -597,6 +600,7 @@
         return false;
       }
     },
+
     Notify: function(title, message, source) {
       if (Options.Get('enableNotifications') && Options.Get(source)) {
         var theme = Options.Get('notificationTheme');
@@ -628,19 +632,23 @@
         });
       }
     },
+
     OpenURL: function(url, devID) {
       chrome.runtime.sendMessage({openURL: {
         url: url
       }});
 
     },
+
     MessageBackground: function(message, sendResponse) {
     },
+
     MessageTabs: function(message, sendResponse) {
       chrome.runtime.sendMessage({tabs: message}, function(response) {
         sendResponse(response);
       });
     },
+    
     ConsoleLog: function(sender, message) {
       chrome.runtime.sendMessage({consoleLog: {
         sender: sender,

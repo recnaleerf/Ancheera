@@ -26,13 +26,13 @@
     sparks: null,
   };
   var responseList = {};
-  var restoreIDs = ['1','2','3','5'];
+  var restoreIDs   = ['1','2','3','5'];
 
   var profileNames = [];
-  var nextUncap = null;
-  var nextCost = 0;
-  var nextUpgrade = null;
-  
+  var nextUncap    = null;
+  var nextCost     = 0;
+  var nextUpgrade  = null;
+
   window.Profile = {
     Initialize: function(callback) {
       for (var i = 0; i < restoreIDs.length; i++) {
@@ -43,23 +43,26 @@
           }});
         });
       }
+
       Storage.Get(['profile'], function(response) {
         if (response['profile'] !== undefined) {
           profile = response['profile'];
         } else {
           Storage.Set('profile', profile);
         }
+
         Object.keys(responseList).forEach(function(key) {
           for (var i = 0; i < responseList[key].length; i++) {
             responseList[key][i](profile[key]);
           }
         });
+
         if (callback !== undefined) {
           callback();
         }
       });
-
     },
+
     InitializeDev: function() {
       var response = [];
       Object.keys(profile).forEach(function(key) {
@@ -73,24 +76,29 @@
       }
       return response;
     },
+
     Get: function(category, response) {
       if (response !== undefined) {
         if (responseList[category] === undefined) {
           responseList[category] = [];
         }
+
         responseList[category].push(response);
         response(profile[category]);
       }
+
       if (profile[category] !== undefined) {
         return profile[category];
       }
     },
+
     CompleteQuest: function(json, raidTuples) {
       var tuples = {};
       if (raidTuples !== undefined) {
         tuples = raidTuples;
       }
       tuples['lupi'] = profile['lupi'] + json.rewards.lupi.sum;
+
       if (json.values.pc_levelup.is_levelup) {
         var remain = 0;
         for (var i = 1; i <= json.values.pc.param.new.level; i++) {
@@ -103,7 +111,8 @@
       } else {
         tuples['levelNextExp'] = parseInt(json.values.pc.param.remain_next_exp) - (parseInt(json.values.get_exp.exp) + parseInt(json.values.get_exp.exp_bonus));
       }
-      tuples['level'] = json.values.pc.param.new.level;
+
+      tuples['level']        = json.values.pc.param.new.level;
       tuples['levelPercent'] = json.values.pc.param.new.exp_width + '%';
 
       if (profile['job'] !== json.values.pc.job.new.level) {
@@ -117,13 +126,16 @@
       } else {
         tuples['jobNextExp'] = parseInt(json.values.pc.job.remain_next_exp) - (parseInt(json.values.get_exp.job_exp) + parseInt(json.values.get_exp.job_exp_bonus));
       }
-      tuples['job'] = json.values.pc.job.new.level;
+
+      tuples['job']        = json.values.pc.job.new.level;
       tuples['jobPercent'] = json.values.pc.job.new.exp_width + '%';
+
       if (tuples['job'] === 20) {
         tuples['zenith'] = parseInt(json.values.pc.job.zenith.after_lp);
         tuples['zenithPercent'] = json.values.pc.job.zenith.after_exp_gauge + '%';
         tuples['zenithNextExp'] = profile['zenithNextExp'] -(parseInt(json.values.get_exp.job_exp) + parseInt(json.values.get_exp.job_exp_bonus));
       }
+
       var list = json.rewards.reward_list;
       var item;
       var category;
@@ -142,15 +154,18 @@
           }
         }
       }
+
       setProfile(tuples);
     },
+
     CompleteRaid: function(json) {
       var path;
       var tuples = {};
-      var ids = ['10100', '20100', '20200'];
+      var ids    = ['10100', '20100', '20200'];
       if (!Array.isArray(json.mbp_info) && json.mbp_info !== undefined) {
-        tuples['renown'] = profile['renown'];
+        tuples['renown']   = profile['renown'];
         tuples['prestige'] = profile['prestige'];
+
         for (var i = 0; i < ids.length; i++) {
           if (json.mbp_info.add_result[ids[i]] !== undefined) {
             path = json.mbp_info.add_result[ids[i]];
@@ -165,11 +180,14 @@
           }
         }
       }
+
       Profile.CompleteQuest(json, tuples);
     },
+
     SetChips: function(amount) {
       setProfile({'casinoChips': parseInt(amount)});
     },
+
     SetWeaponNumber: function(json) {
       var tuples = {};
       tuples['weaponMax'] = parseInt(json.options.max_number);
@@ -177,6 +195,7 @@
 
       setProfile(tuples);
     },
+
     SetSummonNumber: function(json) {
       var tuples = {};
       tuples['summonMax'] = parseInt(json.options.max_number);
@@ -184,6 +203,7 @@
 
       setProfile(tuples);
     },
+
     SetCharacterNumber: function(json, url) {
       if (url.indexOf('/1/0?') !== -1) {
         for (var key in json.options.filter) {
@@ -196,6 +216,7 @@
         setProfile({'characterNumber': json.options.number});
       }
     },
+
     MoveFromStash: function(json) {
       var tuples = {};
       var type;
@@ -204,10 +225,11 @@
       } else if (json.from_name.indexOf('Summon') !== -1) {
         type = 'summon';
       }
-      tuples[type + 'Max'] = parseInt(json.to_max_number);
+      tuples[type + 'Max']    = parseInt(json.to_max_number);
       tuples[type + 'Number'] = json.to_number;
       setProfile(tuples);
     },
+
     MoveToStash: function(json) {
       var tuples = {};
       var type;
@@ -216,44 +238,47 @@
       } else if (json.to_name.indexOf('Summon') !== -1) {
         type = 'summon';
       }
-      tuples[type + 'Max'] = parseInt(json.from_max_number);
+      tuples[type + 'Max']    = parseInt(json.from_max_number);
       tuples[type + 'Number'] = json.from_number;
       setProfile(tuples);
     },
+
     SetLupiCrystal: function(json) {
       var tuples = {};
       if (json.mydata !== undefined) {
         if (json.mydata.notice !== undefined && json.mydata.trajectory_drop !== undefined) {
           tuples['drops'] = profile['drops'] + parseInt(json.mydata.notice.trajectory_drop);
         }
-        tuples['lupi'] = parseInt(json.mydata.possessed.lupi);
+        tuples['lupi']    = parseInt(json.mydata.possessed.lupi);
         tuples['crystal'] = parseInt(json.mydata.possessed.stone);
         setProfile(tuples);
       } else if (json.option !== undefined && json.option.mydata_assets !== undefined)
       {
-        tuples['lupi'] = parseInt(json.option.mydata_assets.mydata.possessed.lupi);
+        tuples['lupi']    = parseInt(json.option.mydata_assets.mydata.possessed.lupi);
         tuples['crystal'] = parseInt(json.option.mydata_assets.mydata.possessed.stone);
         setProfile(tuples);
       }
     },
+
     LupiDraw: function(json) {
       var tuples = {};
 
-      tuples['weaponMax'] = parseInt(json.user_info.weapon_max);
+      tuples['weaponMax']    = parseInt(json.user_info.weapon_max);
       tuples['weaponNumber'] = parseInt(json.user_info.weapon_count);
-
-      tuples['summonMax'] = parseInt(json.user_info.summon_max);
+      tuples['summonMax']    = parseInt(json.user_info.summon_max);
       tuples['summonNumber'] = parseInt(json.user_info.summon_count);
-      tuples['lupi'] = parseInt(json.user_info.money);
-      tuples['crystal'] = parseInt(json.user_info.user_money);
+      tuples['lupi']         = parseInt(json.user_info.money);
+      tuples['crystal']      = parseInt(json.user_info.user_money);
       setProfile(tuples);
     },
+
     SetDrops: function(json) {
       var tuples = {};
       tuples['crystal'] = parseInt(json.amount);
-      tuples['drops'] = parseInt(json.trangect_drop);
+      tuples['drops']   = parseInt(json.trangect_drop);
       setProfile(tuples);
     },
+
     SetDefense: function(json) {
       var tuples = {};
       if (json.defendorder_point_total !== undefined) {
@@ -264,14 +289,16 @@
       }
       setProfile(tuples);
     },
+
     SpendCrystals: function(json) {
     },
+
     SetHomeProfile: function(rank, rankPercent, job, jobPercent, jobPoints, renown, prestige) {
       var tuples = {};
 
       tuples['level'] = rank;
       if (rankPercent !== undefined) {
-        tuples['levelPercent'] =  rankPercent.substring(rankPercent.indexOf(': ') + 2, rankPercent.indexOf(';'));
+        tuples['levelPercent'] = rankPercent.substring(rankPercent.indexOf(': ') + 2, rankPercent.indexOf(';'));
       }
       tuples['job'] = parseInt(job);
       if (jobPercent !== undefined) {
@@ -292,25 +319,28 @@
       }
       setProfile(tuples);
     },
+
     AddLupi: function(amt) {
       setProfile({'lupi': profile['lupi'] + parseInt(amt)});
     },
+
     CheckWeaponSummon: function(json) {
       var tuples = {};
-      tuples['weaponMax'] = parseInt(json.weapon_count.max_count);
+      tuples['weaponMax']    = parseInt(json.weapon_count.max_count);
       tuples['weaponNumber'] = json.weapon_count.current_count;
-      tuples['summonMax'] = parseInt(json.summon_count.max_count);
+      tuples['summonMax']    = parseInt(json.summon_count.max_count);
       tuples['summonNumber'] = json.summon_count.current_count;
       setProfile(tuples);
     },
+
     GetLoot: function(json) {
       var item;
       var tuples = {};
-      var list = json.rewards.reward_list;
+      var list   = json.rewards.reward_list;
       for (var property in list) {
         if (list.hasOwnProperty(property)) {
           for (var i = 0; i < list[property].length; i++) {
-            item = list[property][i];
+            item     = list[property][i];
             category = getCategory(item.item_kind);
             if (category !== undefined) {
               if (tuples[category] === undefined) {
@@ -322,10 +352,11 @@
           }
         }
       }
+
       list = json.rewards.article_list;
       for (var property in list) {
         if (list.hasOwnProperty(property)) {
-          item = list[property];
+          item     = list[property];
           category = getCategory('' + item.kind);
           if (category !== undefined) {
             if (tuples[category] === undefined) {
@@ -338,18 +369,20 @@
       }
       setProfile(tuples);
     },
+
     GetGift: function(json) {
       var category = getCategory(json.item_kind_id);
       if (category !== undefined) {
         setProfile({[category]: profile[category] + parseInt(json.number)});
       }
     },
+
     GetAllGifts: function(json) {
       var item;
       var category;
       var tuples = {};
       for (var i = 0; i < json.presents.length; i++) {
-        item = json.presents[i];
+        item     = json.presents[i];
         category = getCategory(item.item_kind_id);
         if (category !== undefined) {
           if (tuples[category] === undefined) {
@@ -361,9 +394,11 @@
       }
       setProfile(tuples);
     },
+
     SetUncapItem: function(json) {
       nextUncap = null;
     },
+
     SetUncap: function(json, url) {
       if (url.indexOf('weapon') !== -1) {
         nextUncap = 'weaponNumber';
@@ -371,18 +406,22 @@
         nextUncap = 'summonNumber';
       }
     },
+
     Uncap: function(json) {
       if (nextUncap !== null) {
         setProfile({[nextUncap]: profile[nextUncap] - 1});
       }
     },
+
     SetUncapCost: function(json) {
       nextCost = parseInt(json.cost);
       setProfile({'lupi': parseInt(json.amount)});
     },
+
     BuyUncap: function() {
       setProfile({'lupi': nextCost});
     },
+
     SetUpgrade: function(json, url) {
       var category;
       if (url.indexOf('weapon') !== -1 || url.indexOf('npc') !== -1) {
@@ -391,15 +430,17 @@
         category = 'summonNumber';
       }
       nextUpgrade = {
-        'amount': json.material_list.length,
+        'amount':   json.material_list.length,
         'category': category
       };
     },
+
     Upgrade: function(json) {
       if (nextUpgrade !== undefined) {
         setProfile({[nextUpgrade.category]: profile[nextUpgrade.category] -nextUpgrade.amount});
       }
     },
+
     PurchaseItem: function(json) {
       var dir = json.article.article1;
       if (dir.master !== undefined) {
@@ -412,6 +453,7 @@
       }
     },
   };
+  
   getCategory = function(item_kind) {
     if (item_kind === '1') {
       return 'weaponNumber';
