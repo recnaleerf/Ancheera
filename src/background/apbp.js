@@ -110,7 +110,7 @@
     InitializeRaid: function(json) {
       availableRaids = {};
       var raid;
-      for(var i = 0; i < json.assist_raids_data.length; i++) {
+      for (var i = 0; i < json.assist_raids_data.length; i++) {
         raid = json.assist_raids_data[i];
         availableRaids[raid.raid.id] = {
           bp: raid.used_battle_point
@@ -290,11 +290,11 @@
     currBP = parseInt(curr);
     maxBP  = parseInt(max);
     Lyria.Message.PostAll({ setText: {
-      'id': '#bp-number',
+      'id':    '#bp-number',
       'value': 'EP: ' + currBP + '/' + maxBP
     }});
     Lyria.Message.PostAll({ setBar: {
-      'id': '#bp-bar',
+      'id':    '#bp-bar',
       'value': ((currBP / maxBP) * 100) + '%'
     }});
   };

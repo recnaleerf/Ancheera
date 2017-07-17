@@ -71,8 +71,8 @@
   };
 
   var setBuff = function(index) {
-    Message.PostAll(getJquery('text', index));
-    Message.PostAll(getJquery('image', index));
+    Lyria.Message.PostAll(getJquery('text', index));
+    Lyria.Message.PostAll(getJquery('image', index));
   };
 
   var getJquery = function(type, index) {

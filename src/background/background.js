@@ -87,7 +87,7 @@
     if (message.getOption) {
       var id = message.getOption;
       sendResponse({
-        'id': id,
+        'id':    id,
         'value': Lyria.Options.Get(id)
       });
     }
@@ -149,13 +149,13 @@
         response[0] = {
           'setTheme': Lyria.Options.Get('windowTheme')
         };
-        response = response.concat(Profile.InitializeDev());
-        response = response.concat(Time.InitializeDev());
-        response = response.concat(Dailies.InitializeDev());
-        response = response.concat(Casino.InitializeDev());
-        response = response.concat(Supplies.InitializeDev());
-        response = response.concat(Buffs.InitializeDev());
-        response = response.concat(Quest.InitializeDev());
+        response = response.concat(Lyria.Profile.InitializeDev());
+        response = response.concat(Lyria.Time.InitializeDev());
+        response = response.concat(Lyria.Dailies.InitializeDev());
+        response = response.concat(Lyria.Casino.InitializeDev());
+        response = response.concat(Lyria.Supplies.InitializeDev());
+        response = response.concat(Lyria.Buffs.InitializeDev());
+        response = response.concat(Lyria.Quest.InitializeDev());
         connections[message.id].postMessage({initialize: response});
         return;
       }
@@ -167,16 +167,16 @@
             connections[message.id].postMessage({pageLoad: tabs[0].url});
             var index = tabs[0].url.indexOf('#quest/supporter/');
             if (index !== -1) {
-              Message.PostAll({'setClick': {
-                'id': '#quest-repeat',
+              Lyria.Message.PostAll({'setClick': {
+                'id':    '#quest-repeat',
                 'value': tabs[0].url.slice(index)
               }});
             } else {
               index = tabs[0].url.indexOf('#event/');
               if (index !== -1 && tabs[0].url.indexOf('/supporter/') !== -1)
               {
-                Message.PostAll({'setClick': {
-                  'id': '#quest-repeat',
+                Lyria.Message.PostAll({'setClick': {
+                  'id':    '#quest-repeat',
                   'value': tabs[0].url.slice(index)
                 }});
               }
@@ -208,11 +208,11 @@
             currentVersion = patchNoteList[i];
             note += generateNote(currentVersion);
           }
-          Message.Post(message.id, {'setMessage': note});
+          Lyria.Message.Post(message.id, {'setMessage': note});
           currentVersion = CURRENT_VERSION;
-          Storage.Set('version', CURRENT_VERSION);
+          Lyria.Storage.Set('version', CURRENT_VERSION);
         }
-        Lyria.Message.Post(message.id, {'setTheme': Options.Get('windowTheme', function(id, value) {
+        Lyria.Message.Post(message.id, {'setTheme': Lyria.Options.Get('windowTheme', function(id, value) {
           Lyria.Message.PostAll({
             'setTheme': value
           });
@@ -329,7 +329,8 @@
           Lyria.Dailies.SetCoop(message.request.response);
         }
         //casino list
-        if (message.request.url.indexOf('/casino/article_list/1/1?_=') !== -1 || message.request.url.indexOf('/casino/article_list/undefined/1?_=') !== -1) {
+        if (message.request.url.indexOf('/casino/article_list/1/1?_=') !== -1 ||
+            message.request.url.indexOf('/casino/article_list/undefined/1?_=') !== -1) {
           Lyria.Casino.SetCasino1(message.request.response);
           Lyria.Profile.SetChips(message.request.response.medal.number);
         }
@@ -368,7 +369,8 @@
           Lyria.Supplies.GetGift(message.request.response);
           Lyria.Profile.GetGift(message.request.response);
         }
-        if (message.request.url.indexOf('/present/receive_all?') !== -1 || message.request.url.indexOf('/present/term_receive_all?') !== -1) {
+        if (message.request.url.indexOf('/present/receive_all?') !== -1 ||
+            message.request.url.indexOf('/present/term_receive_all?') !== -1) {
           Lyria.Supplies.GetAllGifts(message.request.response);
           Lyria.Profile.GetAllGifts(message.request.response);
         }
@@ -397,7 +399,8 @@
           Lyria.Profile.SetDrops(message.request.response);
         }
         //Moon shop
-        if (message.request.url.indexOf('/shop_exchange/article_list/5/1/1/null/null/null?') !== -1 || message.request.url.indexOf('/shop_exchange/article_list/5/1/1/null/null/3?') !== -1) {
+        if (message.request.url.indexOf('/shop_exchange/article_list/5/1/1/null/null/null?') !== -1 ||
+            message.request.url.indexOf('/shop_exchange/article_list/5/1/1/null/null/3?') !== -1) {
           Lyria.Dailies.CheckMoons(message.request.response);
         }
         //do shop
@@ -413,14 +416,17 @@
         if (message.request.url.indexOf('/shop/purchase') !== -1) {
           Lyria.Profile.SpendCrystals(message.request.response);
         }
-        if (message.request.url.indexOf('mbp/mbp_info') !== -1 || message.request.url.indexOf('/user/content/index?') !== -1) {
+        if (message.request.url.indexOf('mbp/mbp_info') !== -1 ||
+            message.request.url.indexOf('/user/content/index?') !== -1) {
           Lyria.Dailies.CheckRenown(message.request.response);
         }
-        if (message.request.url.indexOf('evolution_weapon/evolution?') !== -1 || message.request.url.indexOf('evolution_summon/evolution?') !== -1) {
+        if (message.request.url.indexOf('evolution_weapon/evolution?') !== -1 ||
+            message.request.url.indexOf('evolution_summon/evolution?') !== -1) {
           Lyria.Profile.Uncap(message.request.response);
           Lyria.Profile.BuyUncap();
         }
-        if (message.request.url.indexOf('evolution_weapon/item_evolution?') !== -1 || message.request.url.indexOf('evolution_summon/item_evolution?') !== -1) {
+        if (message.request.url.indexOf('evolution_weapon/item_evolution?') !== -1 ||
+            message.request.url.indexOf('evolution_summon/item_evolution?') !== -1) {
           Lyria.Supplies.Uncap(message.request.response);
           Lyria.Profile.BuyUncap();
         }
@@ -431,7 +437,8 @@
           Lyria.Supplies.SetUncapItem(message.request.response);
           Lyria.Profile.SetUncapItem(message.request.response);
         }
-        if (message.request.url.indexOf('weapon/weapon_base_material?') !== -1 || message.request.url.indexOf('summon/summon_base_material?') !== -1) {
+        if (message.request.url.indexOf('weapon/weapon_base_material?') !== -1 ||
+            message.request.url.indexOf('summon/summon_base_material?') !== -1) {
           Supplies.SetUncap(message.request.response);
           Lyria.Profile.SetUncap(message.request.response, message.request.url);
         }
