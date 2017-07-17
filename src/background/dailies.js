@@ -127,10 +127,10 @@
     '501021': true
   };
 
-  window.Dailies = {
+  window.Lyria.Dailies = {
     Initialize: function(callback) {
 
-      Options.Get('increasedRenownLimit', function(id, value) {
+      Lyria.Options.Get('increasedRenownLimit', function(id, value) {
         increaseRenown(value);
         var array = [];
         Object.keys(dailies.renown).forEach(function(key) {
@@ -138,35 +138,35 @@
         });
         setDailies(array, true);
       });
-      var hide = Options.Get('freeSingleRoll', function(id, value) {
-        Message.PostAll({'hideObject': {
+      var hide = Lyria.Options.Get('freeSingleRoll', function(id, value) {
+        Lyria.Message.PostAll({'hideObject': {
           'id': '#dailies-freeSingleRoll-Panel',
           'value': !value
         }});
         setDailies([['freeSingleRoll'], dailies['freeSingleRoll']], true);
       });
-      Options.Get('primarchDaily', function(id, value) {
-        Message.PostAll({'hideObject': {
+      Lyria.Options.Get('primarchDaily', function(id, value) {
+        Lyria.Message.PostAll({'hideObject': {
           'id': '#dailies-primarchs-Panel',
           'value': !value
         }});
         setDailies([['primarchs'], dailies['primarchs']], true);
       });
       Object.keys(dailies.distinctions).forEach(function(key) {
-        Options.Get(key, function(id, value) {
+        Lyria.Options.Get(key, function(id, value) {
           id        = id[0];
           var index = enabledDistinctionList.indexOf(id);
           console.log(id);
           console.log(enabledDistinctionList);
           if (value && index === -1) {
             if (enabledDistinctionList.length === 0) {
-              Message.PostAll({'hideObject': {
+              Lyria.Message.PostAll({'hideObject': {
                 'id': '#distinction-dailies',
                 'value': false
               }});
             }
             enabledDistinctionList.push(id);
-            Message.PostAll({'setHeight': {
+            Lyria.Message.PostAll({'setHeight': {
               'id':   '#daily-distinction-list',
               'value': Math.ceil(enabledDistinctionList.length / 4) * 47
             }});
@@ -174,19 +174,19 @@
             console.log('splicing');
             enabledDistinctionList.splice(index, 1);
             if (enabledDistinctionList.length === 0) {
-              Message.PostAll({'hideObject': {
+              Lyria.Message.PostAll({'hideObject': {
                 'id': '#distinction-dailies',
                 'value': true
               }});
             } else {
-              Message.PostAll({'setHeight': {
+              Lyria.Message.PostAll({'setHeight': {
                 'id': '#daily-distinction-list',
                 'value': Math.ceil(enabledDistinctionList.length / 4) * 47
               }});
             }
           }
           console.log('count: ' + enabledDistinctionList.length);
-          Message.PostAll({'hideObject': {
+          Lyria.Message.PostAll({'hideObject': {
             'id': '#distinctions-body-' + id,
             'value': !value
           }});
@@ -194,17 +194,17 @@
         });
       });
 
-      Profile.Get('level', function(value) {
+      Lyria.Profile.Get('level', function(value) {
         if (!isHL && value >= 101) {
           isHL = true;
-          Message.PostAll({'hideObject': {
+          Lyria.Message.PostAll({'hideObject': {
             'id': '#weekly-prestige',
             'value': false
           }});
         }
       });
 
-      Storage.GetMultiple(['dailies'], function(response) {
+      Lyria.Storage.GetMultiple(['dailies'], function(response) {
         if (response['dailies'] !== undefined) {
           if (response['dailies']['primarchs'] === undefined) {
             for (var key in dailies) {
@@ -213,12 +213,12 @@
               }
             }
             dailies = response['dailies'];
-            Storage.Set('dailies', dailies);
+            Lyria.Storage.Set('dailies', dailies);
           } else {
             dailies = response['dailies'];
           }
         } else {
-          Storage.Set('dailies', dailies);
+          Lyria.Storage.Set('dailies', dailies);
         }
         if (callback !== undefined) {
           callback();
@@ -226,14 +226,14 @@
       });
     },
     InitializeDev: function() {
-      increaseRenown(Options.Get('increasedRenownLimit'));
-      Message.PostAll({'hideObject': {
+      increaseRenown(Lyria.Options.Get('increasedRenownLimit'));
+      Lyria.Message.PostAll({'hideObject': {
         'id': '#dailies-freeSingleRoll-Panel',
-        'value': !Options.Get('freeSingleRoll')
+        'value': !Lyria.Options.Get('freeSingleRoll')
       }});
-      Message.PostAll({'hideObject': {
+      Lyria.Message.PostAll({'hideObject': {
         'id': '#dailies-primarchs-Panel',
-        'value': !Options.Get('primarchDaily')
+        'value': !Lyria.Options.Get('primarchDaily')
       }});
 
       var response = [];
@@ -242,7 +242,7 @@
         checking = true;
       }
       Object.keys(dailies.distinctions).forEach(function(key) {
-        var enabled = Options.Get(key);
+        var enabled = Lyria.Options.Get(key);
         if (checking && enabled) {
           enabledDistinctionList.push(key);
         }
@@ -300,8 +300,8 @@
       });
 
       setDailies(array);
-      Casino.Reset();
-      Quest.Reset();
+      Lyria.Casino.Reset();
+      Lyria.Quest.Reset();
     },
 
     WeeklyReset: function() {
@@ -327,7 +327,7 @@
         });
       }
       setDailies(array);
-      Casino.MonthlyReset();
+      Lyria.Casino.MonthlyReset();
     },
 
     SetDraws: function(json) {
@@ -350,7 +350,7 @@
       var key;
       for (var i = 0; i < json.daily_mission.length; i++) {
         description = json.daily_mission[i].description;
-        key = '' + i;
+        key         = '' + i;
         array.push(['coop', key, 'raw'], description);
         array.push(['coop', key, 'quest'], parseDescription(description));
         array.push(['coop', key, 'max'], parseInt(json.daily_mission[i].max_progress));
@@ -427,7 +427,7 @@
     },
     UseTweet: function(json) {
       if (json.reward_status === true) {
-        APBP.SetMax();
+        Lyria.APBP.SetMax();
         setDailies([['tweet'], false]);
       }
     },
@@ -533,11 +533,11 @@
       if (curr[cat] === undefined || curr[cat] !== value) {
         updated   = true;
         curr[cat] = value;
-        Message.PostAll(getJquery(category));
-        Message.PostAll(checkCollapse(category));
+        Lyria.Message.PostAll(getJquery(category));
+        Lyria.Message.PostAll(checkCollapse(category));
       } else if (override) {
-        Message.PostAll(getJquery(category));
-        Message.PostAll(checkCollapse(category));
+        Lyria.Message.PostAll(getJquery(category));
+        Lyria.Message.PostAll(checkCollapse(category));
       }
     }
     if (updated) {
@@ -551,9 +551,9 @@
       category[0] = 'misc';
       if (dailies['draw-rupie'] !==  0 || dailies['tweet']) {
         collapse = false;
-      } else if (Options.Get('freeSingleRoll') && dailies['freeSingleRoll']) {
+      } else if (Lyria.Options.Get('freeSingleRoll') && dailies['freeSingleRoll']) {
         collapse = false;
-      } else if (Options.Get('primarchDaily') && dailies['primarchs'] !== 0) {
+      } else if (Lyria.Options.Get('primarchDaily') && dailies['primarchs'] !== 0) {
         collapse = false;
       }
     } else if (category[0] === 'coop') {
@@ -591,8 +591,8 @@
       var cat   = category[0];
       var array = Object.keys(dailies[cat]);
       for (var i = 0; i < array.length; i++) {
-        if (dailies[cat][array[i]] === 1 && Options.Get(array[i])) {
-          console.log('failing collapse on: ' + dailies[cat][array[i]] + ' ' + Options.Get(array[i]));
+        if (dailies[cat][array[i]] === 1 && Lyria.Options.Get(array[i])) {
+          console.log('failing collapse on: ' + dailies[cat][array[i]] + ' ' + Lyria.Options.Get(array[i]));
           collapse = false;
           break;
         }

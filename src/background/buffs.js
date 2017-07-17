@@ -21,7 +21,7 @@
 
   window.Buffs = {
     Initialize: function() {
-      Storage.Get(['buffs'], function(response) {
+      Lyria.Storage.Get(['buffs'], function(response) {
         if (response['buffs'] !== undefined) {
           buffs       = response['buffs'];
           var updated = false;
@@ -41,7 +41,7 @@
             setBuff(i);
           }
         } else {
-          Storage.Set('buffs', buffs);
+          Lyria.Storage.Set('buffs', buffs);
         }
       });
     },
@@ -54,7 +54,7 @@
       }
       return response;
     },
-    
+
     StartBuff: function(json, payload) {
       if (json.success) {
         var id        = payload.support_id;
@@ -81,7 +81,7 @@
       if (type === 'text') {
         return {'setText':{
           'id':    id + 'time',
-          'value': Time.ParseTime(Math.abs(buffs[index].endTime - Date.now()), 'h').replace(',','')
+          'value': Lyria.Time.ParseTime(Math.abs(buffs[index].endTime - Date.now()), 'h').replace(',','')
         }};
       } else if (type === 'image') {
         return {'setImage':{
@@ -122,7 +122,7 @@
   };
 
   var saveBuffs = function() {
-    Storage.Set('buffs', buffs);
+    Lyria.Storage.Set('buffs', buffs);
   };
 
 })();

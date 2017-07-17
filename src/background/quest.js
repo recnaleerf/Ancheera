@@ -418,9 +418,9 @@
   };
   events.push(createEvent('#event/teamraid024'));
 
-  window.Quest = {
+  window.Lyria.Quest = {
     Initialize: function(callback) {
-      if (Options.Get('sortRaidsDifficulty')) {
+      if (Lyria.Options.Get('sortRaidsDifficulty')) {
         raidList.sort(sortByDifficulty);
       }
 
@@ -434,7 +434,7 @@
           if (response['quests']['301061'] == undefined) {
             for (var key in remainingQuests) {
               if (response['quests'][key] == undefined) {
-                if (!Options.Get('isMagFest')) {
+                if (!Lyria.Options.Get('isMagFest')) {
                   response['quests'][key] = raidInfo[key].max;
                 } else {
                   response['quests'][key] = raidInfo[key].max + raidInfo[key].magDelta;
@@ -453,7 +453,7 @@
           }
         } else {
           for (var i = 0; i < raidList.length; i++) {
-            if (!Options.Get('isMagFest')) {
+            if (!Lyria.Options.Get('isMagFest')) {
               setRemainingRaids(raidList[i], raidInfo[raidList[i]].max);
             } else {
               setRemainingRaids(raidList[i], raidInfo[raidList[i]].max + raidInfo[raidList[i]].magDelta);
@@ -466,7 +466,7 @@
         }
       });
 
-      isMagFest = Options.Get('isMagFest', function(id, value) {
+      isMagFest = Lyria.Options.Get('isMagFest', function(id, value) {
         var currMag = isMagFest;
         isMagFest = value;
         for (var i = 0; i < raidList.length; i++) {
@@ -482,12 +482,12 @@
         saveRemainingRaids();
       });
 
-      Options.Get('sortRaidsDifficulty', function(id, value) {
+      Lyria.Options.Get('sortRaidsDifficulty', function(id, value) {
         sortRaids(value);
       });
 
       for (var i = 0; i < raidList.length; i++) {
-        Options.Get(raidList[i], function(id, value) {
+        Lyria.Options.Get(raidList[i], function(id, value) {
           setRemainingJquery(id);
         });
       }
@@ -497,8 +497,8 @@
         if (raidInfo[id].animeIDs !== null) {
           for (var j = 0; j < raidInfo[id].animeIDs.length; j++) {
             var temp = id;
-            Supplies.Get(raidInfo[id].animeIDs[j], raidInfo[id].animeTypes[j], function(animeID, num) {
-              Message.PostAll({'setText': {
+            Lyria.Supplies.Get(raidInfo[id].animeIDs[j], raidInfo[id].animeTypes[j], function(animeID, num) {
+              Lyria.Message.PostAll({'setText': {
                 'id': '.anime-count-' + animeID,
                 'value': num
               }});
@@ -509,10 +509,10 @@
 
       for (var i = 0; i < events.length; i++) {
         if (events[i].currency1 !== null) {
-          Supplies.Get(events[i].currency1, 'event', function(id, num) {
+          Lyria.Supplies.Get(events[i].currency1, 'event', function(id, num) {
             for (var i = 0; i < events.length; i++) {
               if (events[i].currency1 === id) {
-                Message.PostAll({'setText': {
+                Lyria.Message.PostAll({'setText': {
                   'id':   '#event-item-' + i,
                   'value': num
                 }});
@@ -528,7 +528,7 @@
                   } else {
                     url = events[i].url + '/supporter/' + events[i].bossID + events[i].bosses[j].id + '/1';
                   }
-                  Message.PostAll({'setClick': {
+                  Lyria.Message.PostAll({'setClick': {
                     'id': '#event-image-' + j,
                     'value': url
                   }});
@@ -539,7 +539,7 @@
         }
       }
 
-      APBP.GetAP(function(num) {
+      Lyria.APBP.GetAP(function(num) {
         for (var i = 0; i < events.length; i++) {
           for (var j = 0; j < events[i].bosses.length; j++) {
             if (num >= events[i].bosses[j].ap) {
@@ -555,7 +555,7 @@
               url = events[i].url + '/supporter/' + events[i].bossID + events[i].bosses[j].id + '/1';
             }
 
-            Message.PostAll({'setClick': {
+            Lyria.Message.PostAll({'setClick': {
               'id': '#event-image-' + j,
               'value': url
             }});
@@ -567,34 +567,34 @@
     InitializeDev: function() {
       var response = [];
       for (var i = 0; i < raidList.length; i++) {
-        var raid = raidInfo[raidList[i]];
+        var raid         = raidInfo[raidList[i]];
         var animeAmounts = null;
         if (raid.animeIDs !== null) {
           animeAmounts = [];
           for (var j = 0; j < raid.animeIDs.length; j++) {
-            animeAmounts[j] = Supplies.Get(raid.animeIDs[j], raid.animeTypes[j]);
+            animeAmounts[j] = Lyria.Supplies.Get(raid.animeIDs[j], raid.animeTypes[j]);
           }
         }
 
         var max = raid.max;
-        if (Options.Get('isMagFest')) {
+        if (Lyria.Options.Get('isMagFest')) {
           max += raid.magDelta;
         }
 
         response.push({'addQuest': {
-          'id': raidList[i],
-          'url': raid.url,
-          'name': raid.name,
-          'amount': remainingQuests[raidList[i]],
-          'max': max,
-          'animeIDs': raid.animeIDs,
+          'id':           raidList[i],
+          'url':          raid.url,
+          'name':         raid.name,
+          'amount':       remainingQuests[raidList[i]],
+          'max':          max,
+          'animeIDs':     raid.animeIDs,
           'animeAmounts': animeAmounts
         }});
       }
 
       for (var i = 0; i < completedRaidList.length; i++) {
         response.push({'appendObject': {
-          'id': '#daily-raid-' + completedRaidList[i],
+          'id':     '#daily-raid-' + completedRaidList[i],
           'target': '#completed-raid-list'
         }});
       }
@@ -613,12 +613,12 @@
 
       for (var i = 0; i < events.length; i++) {
         response.push({'setText': {
-          'id': '#event-item-' + i,
-          'value': Supplies.Get(events[i].currency1, 'event')
+          'id':   '#event-item-' + i,
+          'value': Lyria.Supplies.Get(events[i].currency1, 'event')
         }});
         for (var j = 0; j < events[i].bosses.length; j++) {
           response.push({'setClick': {
-            'id': '#event-image-' + j,
+            'id':   '#event-image-' + j,
             'value': events[i].bosses[j].url
           }});
         }
@@ -626,8 +626,8 @@
 
       for (var i = 0; i < raidList.length; i++) {
         response.push({'hideObject': {
-          'id': '#daily-raid-' + raidList[i],
-          'value': !Options.Get(raidList[i])
+          'id':    '#daily-raid-' + raidList[i],
+          'value': !Lyria.Options.Get(raidList[i])
         }});
       }
       return response;
@@ -636,7 +636,7 @@
     Reset: function() {
       for (var key in remainingQuests) {
         if (remainingQuests.hasOwnProperty(key)) {
-          if (!Options.Get('isMagFest')) {
+          if (!Lyria.Options.Get('isMagFest')) {
             setRemainingRaids(key, raidInfo[key].max);
           } else {
             setRemainingRaids(key, raidInfo[key].max + raidInfo[key].magDelta);
@@ -661,7 +661,7 @@
     CreateQuest: function(json, payload, devID) {
       if (json.result !== undefined && json.result === 'ok') {
         // TODO: Why is this a global? Who's using it?
-        quest = createQuest(json.raid_id, '#raid/', devID);
+        quest  = createQuest(json.raid_id, '#raid/', devID);
         var id = '' + payload.quest_id;
         if (id !== undefined) {
           if (remainingQuests[id] !== undefined) {
@@ -669,19 +669,19 @@
             saveRemainingRaids();
             if (raidInfo[id].animeIDs !== null && payload.use_item_id !== undefined) {
               var index = raidInfo[id].animeIDs.indexOf(payload.use_item_id);
-              Supplies.Increment(raidInfo[id].animeIDs[index], '10', -raidInfo[id].animeCounts[index]);
+              Lyria.Supplies.Increment(raidInfo[id].animeIDs[index], '10', -raidInfo[id].animeCounts[index]);
             }
           }
           for (var i = 0; i < events.length; i++) {
             if (events[i].bossID !== null) {
               for (var j = 0; j < events[i].bosses.length; j++) {
                 if (id === (events[i].bossID + events[i].bosses[j].id)) {
-                  APBP.InitializeQuest({'action_point': events[i].bosses[j].ap});
+                  Lyria.APBP.InitializeQuest({'action_point': events[i].bosses[j].ap});
                   if (events[i].currency1 !== null) {
-                    Supplies.Increment(events[i].currency1, '10', -events[i].bosses[j].currency1);
+                    Lyria.Supplies.Increment(events[i].currency1, '10', -events[i].bosses[j].currency1);
                   }
                   if (events[i].currency2 !== null) {
-                    Supplies.Increment(events[i].currency2, '10', -events[i].bosses[j].currency2);
+                    Lyria.Supplies.Increment(events[i].currency2, '10', -events[i].bosses[j].currency2);
                   }
                 }
               }
@@ -736,34 +736,34 @@
       var id = '' + json.raid_id;
       var currQuest;
       if (json.twitter !== undefined && json.twitter.battle_id !== undefined) {
-        Message.Post(devID, {'setClick': {
+        Lyria.Message.Post(devID, {'setClick': {
           'id': '#quest-copy',
           'value': json.twitter.battle_id + ' (' +  json.twitter.monster + ') '
         }});
-        Message.Post(devID, {'setTooltip': {
+        Lyria.Message.Post(devID, {'setTooltip': {
           'id': '#quest-copy',
           'text': json.twitter.battle_id + ' (' +  json.twitter.monster + ') '
         }});
       }
       if (quest !== null && quest.id === id) {
         quest.image = enemyImageURL + json.boss.param[0].cjs.substring(json.boss.param[0].cjs.lastIndexOf('_') + 1) + '.png';
-        currQuest = quest;
+        currQuest   = quest;
 
       } else {
         var exists = false;
-        var image = enemyImageURL + json.boss.param[0].cjs.substring(json.boss.param[0].cjs.lastIndexOf('_') + 1) + '.png';
+        var image  = enemyImageURL + json.boss.param[0].cjs.substring(json.boss.param[0].cjs.lastIndexOf('_') + 1) + '.png';
         for (var i = 0; i < raids.length; i++) {
           if (raids[i].id === id) {
-            exists = true;
+            exists         = true;
             raids[i].image = image;
-            currQuest = raids[i];
+            currQuest      = raids[i];
             break;
           }
         }
         if (!exists) {
           raids.push(createQuest(id, '#raid_multi/', devID));
           raids[raids.length - 1].image = image;
-          currQuest = raids[raids.length - 1];
+          currQuest                     = raids[raids.length - 1];
         }
       }
       if (currQuest.devIDs.indexOf(devID) === -1) {
@@ -798,23 +798,23 @@
           currQuest.id = '' + json.scenario[i].raid_id;
           if (json.scenario[i].is_last_raid) {
             currQuest.url = currQuest.url.replace('raid', 'result');
-            if (Options.Get('skip')) {
-              Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
+            if (Lyria.Options.Get('skip')) {
+              Lyria.Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
               return;
             }
           }
-          if (Options.Get('skip') && Options.Get('skipNext')) {
-            Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
+          if (Lyria.Options.Get('skip') && Lyria.Options.Get('skipNext')) {
+            Lyria.Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
             return;
           }
         }
-        if (Options.Get('ougiRefresh') && (json.scenario[i].cmd == 'special' || json.scenario[i].cmd == 'special_npc'))
+        if (Lyria.Options.Get('ougiRefresh') && (json.scenario[i].cmd == 'special' || json.scenario[i].cmd == 'special_npc'))
         {
           refresh = true;
         }
       }
       if (refresh) {
-        Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
+        Lyria.Message.Post(devID, {'openURL': currQuest.url + currQuest.id});
       }
     },
 
@@ -824,7 +824,7 @@
         if (quest === null) {
           quest = createQuest(id, '#raid/');
         } else {
-          quest.id = id;
+          quest.id  = id;
           quest.url = '#raid/';
         }
       } else {
@@ -858,11 +858,11 @@
     },
 
     SetCoopCode: function(code, devID) {
-      Message.Post(devID, {'setClick': {
+      Lyria.Message.Post(devID, {'setClick': {
         'id': '#quest-copy',
         'value': code + ' (Co-Op Room) '
       }});
-      Message.Post(devID, {'setTooltip': {
+      Lyria.Message.Post(devID, {'setTooltip': {
         'id': '#quest-copy',
         'text': code + ' (Co-Op Room) '
       }});
@@ -876,7 +876,7 @@
     },
 
     CopyTweet: function(json) {
-      if (Options.Get('copyJapaneseName') && json.tweet_mode === 0 && json.twitter.forced_message !== undefined) {
+      if (Lyria.Options.Get('copyJapaneseName') && json.tweet_mode === 0 && json.twitter.forced_message !== undefined) {
         var start = json.twitter.forced_message.indexOf('\n');
         var end   = json.twitter.forced_message.lastIndexOf('\n');
         if (start !== -1 && end !== -1) {
@@ -901,11 +901,11 @@
       url   = '';
     }
 
-    Message.PostAll({'setImage': {
+    Lyria.Message.PostAll({'setImage': {
       'id':    '#quest-image-curr',
       'value': image
     }});
-    Message.PostAll({'setClick': {
+    Lyria.Message.PostAll({'setClick': {
       'id':    '#quest-image-curr',
       'value': url
     }});
@@ -918,11 +918,11 @@
         image = blankIcon;
         url   = '';
       }
-      Message.PostAll({'setImage': {
+      Lyria.Message.PostAll({'setImage': {
         'id': '#quest-image-' + i,
         'value': image
       }});
-      Message.PostAll({'setClick': {
+      Lyria.Message.PostAll({'setClick': {
         'id': '#quest-image-' + i,
         'value': url
       }});
@@ -936,59 +936,59 @@
     var devID;
     for (var k = 0; k < currQuest.devIDs.length; k++) {
       devID = currQuest.devIDs[k];
-      if (!Message.Post(devID, undefined)) {
+      if (!Lyria.Message.Post(devID, undefined)) {
         currQuest.devIDs.splice(k, 1);
         k--;
       } else {
         for (var i = 0; i < 4; i++) {
           if (currQuest.characters[pos] !== null && i < currQuest.formation.length) {
             var pos = currQuest.formation[i];
-            Message.Post(devID, {'hideObject': {
+            Lyria.Message.Post(devID, {'hideObject': {
               'id': '#quest-character-' + i,
               'value': false
             }});
-            Message.Post(devID, {'setImage': {
+            Lyria.Message.Post(devID, {'setImage': {
               'id': '#quest-character-image-' + i,
               'value': currQuest.characters[pos].image
             }});
             for (var j = 0; j < currQuest.characters[pos].skills.length; j++) {
               if (currQuest.characters[pos].skills[j] !== null) {
-                Message.Post(devID, {'hideObject': {
+                Lyria.Message.Post(devID, {'hideObject': {
                   'id': '#quest-skill-' + i + '-' + j,
                   'value': false
                 }});
-                Message.Post(devID, {'setImage': {
+                Lyria.Message.Post(devID, {'setImage': {
                   'id': '#quest-skill-image-' + i + '-' + j,
                   'value': currQuest.characters[pos].skills[j].image
                 }});
                 if (currQuest.characters[pos].skills[j].cooldown === 0) {
-                  Message.Post(devID, {'setText': {
+                  Lyria.Message.Post(devID, {'setText': {
                     'id': '#quest-skill-text-' + i + '-' + j,
                     'value': ''
                   }});
-                  Message.Post(devID, {'setOpacity': {
+                  Lyria.Message.Post(devID, {'setOpacity': {
                     'id': '#quest-skill-image-' + i + '-' + j,
                     'value': 1
                   }});
                 } else {
-                  Message.Post(devID, {'setText': {
+                  Lyria.Message.Post(devID, {'setText': {
                     'id': '#quest-skill-text-' + i + '-' + j,
                     'value': currQuest.characters[pos].skills[j].cooldown
                   }});
-                  Message.Post(devID, {'setOpacity': {
+                  Lyria.Message.Post(devID, {'setOpacity': {
                     'id': '#quest-skill-image-' + i + '-' + j,
                     'value': .4
                   }});
                 }
               } else {
-                Message.Post(devID, {'hideObject': {
+                Lyria.Message.Post(devID, {'hideObject': {
                   'id': '#quest-skill-' + i + '-' + j,
                   'value': true
                 }});
               }
             }
           } else {
-            Message.Post(devID, {'hideObject': {
+            Lyria.Message.Post(devID, {'hideObject': {
               'id': '#quest-character-' + i,
               'value': true
             }});
@@ -996,16 +996,16 @@
         }
         for (var i = 0; i < currQuest.enemies.length; i++) {
           if (currQuest.enemies[i] !== null) {
-            Message.Post(devID, {'hideObject': {
+            Lyria.Message.Post(devID, {'hideObject': {
               'id': '#quest-enemy-' + i,
               'value': false
             }});
-            Message.Post(devID, {'setImage': {
+            Lyria.Message.Post(devID, {'setImage': {
               'id': '#quest-enemy-image-' + i,
               'value': currQuest.enemies[i].image
             }});
           } else {
-            Message.Post(devID, {'hideObject': {
+            Lyria.Message.Post(devID, {'hideObject': {
               'id': '#quest-enemy-' + i,
               'value': true
             }});
@@ -1013,35 +1013,35 @@
         }
         for (var i = 0; i < currQuest.summons.length; i++) {
           if (currQuest.summons[i] !== null) {
-            Message.Post(devID, {'setImage': {
+            Lyria.Message.Post(devID, {'setImage': {
               'id':    '#quest-summon-image-' + i,
               'value': currQuest.summons[i].image
             }});
             if (currQuest.summons[i].cooldown === 0) {
-              Message.Post(devID, {'setText': {
+              Lyria.Message.Post(devID, {'setText': {
                 'id':    '#quest-summon-text-' + i,
                 'value': ''
               }});
-              Message.Post(devID, {'setOpacity': {
+              Lyria.Message.Post(devID, {'setOpacity': {
                 'id': '#quest-summon-image-' + i,
                 'value': 1
               }});
             } else {
-              Message.Post(devID, {'setText': {
+              Lyria.Message.Post(devID, {'setText': {
                 'id':   '#quest-summon-text-' + i,
                 'value': currQuest.summons[i].cooldown
               }});
-              Message.Post(devID, {'setOpacity': {
+              Lyria.Message.Post(devID, {'setOpacity': {
                 'id':    '#quest-summon-image-' + i,
                 'value': .6
               }});
             }
           } else {
-            Message.Post(devID, {'setImage': {
+            Lyria.Message.Post(devID, {'setImage': {
               'id':    '#quest-summon-image-' + i,
               'value': blankIcon
             }});
-            Message.Post(devID, {'setText': {
+            Lyria.Message.Post(devID, {'setText': {
               'id':    '#quest-summon-text-' + i,
               'value': ''
             }});
@@ -1066,7 +1066,7 @@
         currRaidList.splice(currIndex, 1);
         var found = false;
         for (var i = 0; i < completedRaidList.length; i++) {
-          if (!Options.Get('sortRaidsDifficulty')) {
+          if (!Lyria.Options.Get('sortRaidsDifficulty')) {
             if (raidInfo[id].sequence < raidInfo[completedRaidList[i]].sequence) {
               completedRaidList.splice(i, 0, id);
               found = true;
@@ -1089,7 +1089,7 @@
         completedRaidList.splice(currIndex, 1);
         var found = false;
         for (var i = 0; i < currRaidList.length; i++) {
-          if (!Options.Get('sortRaidsDifficulty')) {
+          if (!Lyria.Options.Get('sortRaidsDifficulty')) {
             if (raidInfo[id].sequence < raidInfo[currRaidList[i]].sequence) {
               currRaidList.splice(i, 0, id);
               found = true;
@@ -1114,25 +1114,25 @@
   };
 
   var setRemainingJquery = function(id) {
-    if (!Options.Get('isMagFest')) {
-      Message.PostAll({'setText': {
+    if (!Lyria.Options.Get('isMagFest')) {
+      Lyria.Message.PostAll({'setText': {
         'id':    '#remaining-' + id,
         'value': remainingQuests[id] + '/' + raidInfo[id].max
       }});
     } else {
-      Message.PostAll({'setText': {
+      Lyria.Message.PostAll({'setText': {
         'id':    '#remaining-' + id,
         'value': remainingQuests[id] + '/' + (raidInfo[id].max + raidInfo[id].magDelta)
       }});
     }
 
-    if (Options.Get(id)) {
-      Message.PostAll({'hideObject': {
+    if (Lyria.Options.Get(id)) {
+      Lyria.Message.PostAll({'hideObject': {
         'id': '#daily-raid-' + id,
         'value': false
       }});
     } else {
-      Message.PostAll({'hideObject': {
+      Lyria.Message.PostAll({'hideObject': {
         'id': '#daily-raid-' + id,
         'value': true
       }});
@@ -1140,17 +1140,17 @@
 
     if (remainingQuests[id] !== 0) {
       for (var i = 0; i < currRaidList.length; i++) {
-        if (!Options.Get('sortRaidsDifficulty')) {
-          if (raidInfo[id].sequence < raidInfo[currRaidList[i]].sequence && Options.Get(currRaidList[i])) {
-            Message.PostAll({'beforeObject': {
+        if (!Lyria.Options.Get('sortRaidsDifficulty')) {
+          if (raidInfo[id].sequence < raidInfo[currRaidList[i]].sequence && Lyria.Options.Get(currRaidList[i])) {
+            Lyria.Message.PostAll({'beforeObject': {
               'id': '#daily-raid-' + id,
               'target': '#daily-raid-' + currRaidList[i]
             }});
             return;
           }
         } else {
-          if (raidInfo[id].sequence2 < raidInfo[currRaidList[i]].sequence2 && Options.Get(currRaidList[i])) {
-            Message.PostAll({'beforeObject': {
+          if (raidInfo[id].sequence2 < raidInfo[currRaidList[i]].sequence2 && Lyria.Options.Get(currRaidList[i])) {
+            Lyria.Message.PostAll({'beforeObject': {
               'id': '#daily-raid-' + id,
               'target': '#daily-raid-' + currRaidList[i]
             }});
@@ -1159,24 +1159,24 @@
         }
       }
 
-      Message.PostAll({'appendObject': {
+      Lyria.Message.PostAll({'appendObject': {
         'id': '#daily-raid-' + id,
         'target': '#daily-raid-list'
       }});
       return;
     } else {
       for (var i = 0; i < completedRaidList.length; i++) {
-        if (!Options.Get('sortRaidsDifficulty')) {
-          if (raidInfo[id].sequence < raidInfo[completedRaidList[i]].sequence && Options.Get(completedRaidList[i])) {
-            Message.PostAll({'beforeObject': {
+        if (!Lyria.Options.Get('sortRaidsDifficulty')) {
+          if (raidInfo[id].sequence < raidInfo[completedRaidList[i]].sequence && Lyria.Options.Get(completedRaidList[i])) {
+            Lyria.Message.PostAll({'beforeObject': {
               'id':     '#daily-raid-' + id,
               'target': '#daily-raid-' + completedRaidList[i]
             }});
             return;
           }
         } else {
-          if (raidInfo[id].sequence2 < raidInfo[completedRaidList[i]].sequence2 && Options.Get(completedRaidList[i])) {
-            Message.PostAll({'beforeObject': {
+          if (raidInfo[id].sequence2 < raidInfo[completedRaidList[i]].sequence2 && Lyria.Options.Get(completedRaidList[i])) {
+            Lyria.Message.PostAll({'beforeObject': {
               'id':     '#daily-raid-' + id,
               'target': '#daily-raid-' + completedRaidList[i]
             }});
@@ -1184,7 +1184,7 @@
           }
         }
       }
-      Message.PostAll({'appendObject': {
+      Lyria.Message.PostAll({'appendObject': {
         'id':     '#daily-raid-' + id,
         'target': '#completed-raid-list'
       }});
@@ -1209,7 +1209,7 @@
     completedRaidList.sort(sort);
 
     for (var i = 0; i < raidList.length; i++) {
-      Message.PostAll({'hideObject': {
+      Lyria.Message.PostAll({'hideObject': {
         'id':    '#daily-raid-' + raidList[i],
         'value': true
       }});
@@ -1217,12 +1217,12 @@
 
     for (var i = 0; i < currRaidList.length; i++) {
       var id = currRaidList[i];
-      if (Options.Get(id)) {
-        Message.PostAll({'hideObject': {
+      if (Lyria.Options.Get(id)) {
+        Lyria.Message.PostAll({'hideObject': {
           'id':    '#daily-raid-' + id,
           'value': false
         }});
-        Message.PostAll({'appendObject': {
+        Lyria.Message.PostAll({'appendObject': {
           'id':     '#daily-raid-' + id,
           'target': '#daily-raid-list'
         }});
@@ -1231,12 +1231,12 @@
 
     for (var i = 0; i < completedRaidList.length; i++) {
       var id = completedRaidList[i];
-      if (Options.Get(id)) {
-        Message.PostAll({'hideObject': {
+      if (Lyria.Options.Get(id)) {
+        Lyria.Message.PostAll({'hideObject': {
           'id':    '#daily-raid-' + id,
           'value': false
         }});
-        Message.PostAll({'appendObject': {
+        Lyria.Message.PostAll({'appendObject': {
           'id':     '#daily-raid-' + id,
           'target': '#completed-raid-list'
         }});

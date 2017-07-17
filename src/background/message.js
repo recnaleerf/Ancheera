@@ -285,7 +285,7 @@
 
 
 
-// //   window.Message = {
+// //   window.Lyria.Message = {
 // //     Notify: function(title, message, type) {
 // //       chrome.runtime.sendMessage({notification: {
 // //         type: type,

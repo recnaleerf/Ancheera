@@ -74,7 +74,7 @@
   $('#contents').find('.open-url').each(function() {
     $(this).click(function() {
       if ($(this).data('url') !== undefined && $(this).data('url') !== '') {
-        Message.Post({'openURL': url + $(this).data('url')});
+        Lyria.Message.Post({'openURL': url + $(this).data('url')});
       }
     });
   });
@@ -171,7 +171,7 @@
       Object.keys(dropdownHash[weaponType]).forEach(function(key) {
         weaponBuild[key] = null;
       });
-      Message.Post({'getPlanner': $this.text()});
+      Lyria.Message.Post({'getPlanner': $this.text()});
     });
   });
 
@@ -193,7 +193,7 @@
               return;
             }
           }
-          Message.Post({weaponBuild: {
+          Lyria.Message.Post({weaponBuild: {
             'type':  weaponType,
             'build': weaponBuild
           }});
@@ -243,7 +243,7 @@
     name: 'panel'
   });
   backgroundPageConnection.postMessage({
-    connect: chrome.devtools.inspectedWindow.tabId
+    connect: chrome.devtools.inspectedwindow.tabId
   });
 
   var copy =  function(str) {
@@ -261,7 +261,7 @@
       if (!initialized && message.pageLoad.indexOf('#mypage') !== -1) {
         initialized = true;
         url = message.pageLoad.substring(0, message.pageLoad.indexOf('#mypage'));
-        Message.Post({initialize: true});
+        Lyria.Message.Post({initialize: true});
       }
     }
     if (message.initialize) {
@@ -383,7 +383,7 @@
       setClick(message.setClick.id, message.setClick.value);
     }
     if (message.openURL) {
-      Message.Post({'openURL': url + message.openURL});
+      Lyria.Message.Post({'openURL': url + message.openURL});
     }
     if (message.setTheme) {
       setTheme(message.setTheme);
@@ -588,10 +588,10 @@
   var completeActiveCount    = 0;
 
   var generatePlanner = function(planner) {
-    var incompleteCount = 0;
-    var completeCount = 0;
+    var incompleteCount  = 0;
+    var completeCount    = 0;
     var $incompleteItems = $plannerIncompleteList.children('.weapon-item');
-    var $completeItems = $plannerCompleteList.children('.weapon-item');
+    var $completeItems   = $plannerCompleteList.children('.weapon-item');
     if (planner.length === 0) {
       clearPlanner();
       return;
@@ -756,7 +756,7 @@
       newRaid = $dailyRaidBig.clone();
       newRaid.find('.open-url').each(function(i) {
         $(this).click(function() {
-          Message.Post({'openURL': url + '#quest/supporter/' + id + '/1/0/' + animeIDs[i]});
+          Lyria.Message.Post({'openURL': url + '#quest/supporter/' + id + '/1/0/' + animeIDs[i]});
         });
       });
     } else {
@@ -862,9 +862,9 @@
   };
 
   var setTheme = function(theme) {
-    Message.Post({'consoleLog': theme});
+    Lyria.Message.Post({'consoleLog': theme});
     var sheetURL = '../../stylesheets/';
-    var $bars = $('.progress-bar');
+    var $bars    = $('.progress-bar');
     if (theme === 'Tiamat Night') {
       sheetURL += 'night';
       if ($bars.hasClass('progress-bar-danger')) {
@@ -904,9 +904,9 @@
     themeName = theme;
   };
 
-  window.Message = {
+  window.Lyria.Message = {
     Post: function(message) {
-      message.id = chrome.devtools.inspectedWindow.tabId;
+      message.id = chrome.devtools.inspectedwindow.tabId;
       backgroundPageConnection.postMessage(message);
     },
     Copy: function(str) {
@@ -914,5 +914,5 @@
     }
   };
 
-  Message.Post({'devAwake': true});
+  Lyria.Message.Post({'devAwake': true});
 })();

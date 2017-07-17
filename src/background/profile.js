@@ -34,21 +34,21 @@
   var nextCost     = 0;
   var nextUpgrade  = null;
 
-  window.Profile = {
+  window.Lyria.Profile = {
     Initialize: function(callback) {
       for (var i = 0; i < restoreIDs.length; i++) {
-        Supplies.Get(restoreIDs[i], 'recovery', function(id, amt) {
-          Message.PostAll({setText : {
+        Lyria.Supplies.Get(restoreIDs[i], 'recovery', function(id, amt) {
+          Lyria.Message.PostAll({setText : {
             'id': '#profile-' + id,
             'value': amt
           }});
         });
       }
-      Storage.Get(['profile'], function(response) {
+      Lyria.Storage.Get(['profile'], function(response) {
         if (response['profile'] !== undefined) {
           profile = response['profile'];
         } else {
-          Storage.Set('profile', profile);
+          Lyria.Storage.Set('profile', profile);
         }
         Object.keys(responseList).forEach(function(key) {
           for (var i = 0; i < responseList[key].length; i++) {
@@ -69,7 +69,7 @@
       for (var i = 0; i < restoreIDs.length; i++) {
         response.push({setText : {
           'id': '#profile-' + restoreIDs[i],
-          'value': Supplies.Get(restoreIDs[i], 'recovery')
+          'value': Lyria.Supplies.Get(restoreIDs[i], 'recovery')
         }});
       }
       return response;
@@ -169,7 +169,7 @@
           }
         }
       }
-      Profile.CompleteQuest(json, tuples);
+      Lyria.Profile.CompleteQuest(json, tuples);
     },
 
     SetChips: function(amount) {
@@ -493,10 +493,10 @@
         profile[category] = value;
         updated           = true;
 
-        Message.PostAll(getJquery(category));
+        Lyria.Message.PostAll(getJquery(category));
 
         if (category === 'crystal') {
-          Message.PostAll({'setPlannerItemAmount': {
+          Lyria.Message.PostAll({'setPlannerItemAmount': {
             'id':       category,
             'sequence': 0,
             'current':  value
@@ -512,7 +512,7 @@
     });
 
     if (updated) {
-      Storage.Set('profile', profile);
+      Lyria.Storage.Set('profile', profile);
     }
   };
 

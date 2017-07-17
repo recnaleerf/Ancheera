@@ -76,12 +76,12 @@
     'is-defense': false
   };
 
-  window.Time = {
+  window.Lyria.Time = {
     Initialize: function(callback) {
       date = new Date();
 
       date.setMinutes(date.getMinutes() + date.getTimezoneOffset() + 540);
-      Storage.Get(['time'], function(response) {//['daily', 'weekly', 'monthly', 'assault', 'angel', 'defense'], function(response) {
+      Lyria.Storage.Get(['time'], function(response) {//['daily', 'weekly', 'monthly', 'assault', 'angel', 'defense'], function(response) {
         if (response['time'] !== undefined) {
           time             = response['time'];
           dailyReset       = new Date(time.daily);
@@ -105,14 +105,14 @@
           if (Date.parse(date) >= Date.parse(dailyReset)) {
 
             if (Date.parse(date) >= Date.parse(monthlyReset)) {
-              Dailies.MonthlyReset();
+              Lyria.Dailies.MonthlyReset();
               newMonthly();
             }
             if (Date.parse(date) >= Date.parse(weeklyReset)) {
-              Dailies.WeeklyReset();
+              Lyria.Dailies.WeeklyReset();
               newWeekly();
             }
-            Dailies.Reset();
+            Lyria.Dailies.Reset();
             newDaily();
           }
         }
@@ -200,7 +200,7 @@
     },
     UpdateAlertColor() {
       Object.keys(isTimes).forEach(function(key) {
-        Message.PostAll(getJquery(key));
+        Lyria.Message.PostAll(getJquery(key));
       });
     }
   };
@@ -358,37 +358,37 @@
   var checkNewDay = function() {
     if (Date.parse(date) >= Date.parse(nextAssaultTime) && Date.parse(date) < Date.parse(nextAssaultTime) + 3600000) {
       if (!isAssaultTime) {
-        Message.Notify('Strike time has begun!', '', 'strikeTimeNotifications');
+        Lyria.Message.Notify('Strike time has begun!', '', 'strikeTimeNotifications');
       }
       newAssaultTime();
     } else if (Date.parse(date) >= Date.parse(nextAssaultTime) + 3600000) {
       newAssaultTime();
     }
     if (checkAngelTime()) {
-      Message.Notify('Angel Halo has begun!', '', 'angelHaloNotifications');
+      Lyria.Message.Notify('Angel Halo has begun!', '', 'angelHaloNotifications');
     }
     if (checkDefenseOrder()) {
-      Message.Notify('Defense Order has begun!', '', 'defenseOrderNotifications');
+      Lyria.Message.Notify('Defense Order has begun!', '', 'defenseOrderNotifications');
     }
     if (Date.parse(date) >= Date.parse(dailyReset)) {
       if (Date.parse(date) >= Date.parse(monthlyReset) && Date.parse(date) >= Date.parse(weeklyReset)) {
-        Dailies.WeeklyReset();
-        Dailies.MonthlyReset();
+        Lyria.Dailies.WeeklyReset();
+        Lyria.Dailies.MonthlyReset();
         newWeekly();
         newMonthly();
-        Message.Notify('Monthly and weekly reset!', '' ,'dailyResetNotifications');
+        Lyria.Message.Notify('Monthly and weekly reset!', '' ,'dailyResetNotifications');
       } else if (Date.parse(date) >= Date.parse(monthlyReset)) {
-        Dailies.MonthlyReset();
+        Lyria.Dailies.MonthlyReset();
         newMonthly();
-        Message.Notify('Monthly reset!', '' ,'dailyResetNotifications');
+        Lyria.Message.Notify('Monthly reset!', '' ,'dailyResetNotifications');
       } else if (Date.parse(date) >= Date.parse(weeklyReset)) {
-        Dailies.WeeklyReset();
+        Lyria.Dailies.WeeklyReset();
         newWeekly();
-        Message.Notify('Weekly reset!', '' ,'dailyResetNotifications');
+        Lyria.Message.Notify('Weekly reset!', '' ,'dailyResetNotifications');
       } else {
-        Message.Notify('Daily reset!', '' ,'dailyResetNotifications');
+        Lyria.Message.Notify('Daily reset!', '' ,'dailyResetNotifications');
       }
-      Dailies.Reset();
+      Lyria.Dailies.Reset();
       newDaily();
       newDate();
     }
@@ -396,7 +396,7 @@
 
   var setDate = function() {
     var str = '';
-    str     = Time.ParseTime(Math.abs(dailyReset - date), 'h');
+    str     = Lyria.Time.ParseTime(Math.abs(dailyReset - date), 'h');
     setTime('daily-time', str);
     if (str.indexOf('h') === -1) {
       setTime('is-daily', true);
@@ -404,7 +404,7 @@
       setTime('is-daily', false);
     }
 
-    str = Time.ParseTime(Math.abs(weeklyReset - date), 'd' );
+    str = Lyria.Time.ParseTime(Math.abs(weeklyReset - date), 'd' );
     setTime('weekly-time', str);
     if (str.indexOf('d') === -1) {
       setTime('is-weekly', true);
@@ -412,7 +412,7 @@
       setTime('is-weekly', false);
     }
 
-    str = Time.ParseTime(Math.abs(monthlyReset - date), 'd');
+    str = Lyria.Time.ParseTime(Math.abs(monthlyReset - date), 'd');
     setTime('monthly-time', str);
     if (str.indexOf('d') === -1) {
       setTime('is-monthly', true);
@@ -426,7 +426,7 @@
       } else {
         setTime('is-assault', false);
       }
-      str = Time.ParseTime(Math.abs(nextAssaultTime - date), 'h');
+      str = Lyria.Time.ParseTime(Math.abs(nextAssaultTime - date), 'h');
       setTime('assault-time', str);
     } else {
       setTime('is-assault', false);
@@ -439,7 +439,7 @@
       } else {
         setTime('is-angel', false);
       }
-      str = Time.ParseTime(Math.abs(nextAngelHalo - date), 'd');
+      str = Lyria.Time.ParseTime(Math.abs(nextAngelHalo - date), 'd');
       setTime('angel-time', str);
     } else {
       setTime('is-angel', false);
@@ -452,7 +452,7 @@
       } else {
         setTime('is-defense', false);
       }
-      str = Time.ParseTime(Math.abs(nextDefenseOrder - date), 'h');
+      str = Lyria.Time.ParseTime(Math.abs(nextDefenseOrder - date), 'h');
       setTime('defense-time', str);
     } else {
       setTime('is-defense', false);
@@ -546,10 +546,10 @@
   var setTime = function(category, value) {
     if (times[category] !== undefined && times[category] !== value) {
       times[category] = value;
-      Message.PostAll(getJquery(category));
+      Lyria.Message.PostAll(getJquery(category));
     } else if (isTimes[category] !== undefined && isTimes[category] !== value) {
       isTimes[category] = value;
-      Message.PostAll(getJquery(category));
+      Lyria.Message.PostAll(getJquery(category));
     }
   };
 
@@ -570,12 +570,12 @@
     if (jstTimes[category] !== undefined && normalTimes[category] !== undefined && jstTimes[category] !== jstValue) {
       jstTimes[category]    = jstValue;
       normalTimes[category] = normalValue;
-      Message.PostAll(getJquery(category));
+      Lyria.Message.PostAll(getJquery(category));
     }
   };
 
   var setTimeZone = function() {
-    Message.PostAll({setTimeZone: timeZone});
+    Lyria.Message.PostAll({setTimeZone: timeZone});
   };
 
   var getJquery = function(category) {
@@ -594,7 +594,7 @@
     } else if (isTimes[category] !== undefined) {
       var alert = anchiraAlert;
       var sun   = anchiraSun;
-      var theme = Options.Get('windowTheme');
+      var theme = Lyria.Options.Get('windowTheme');
       if (theme === 'Tiamat Night') {
         alert = nightAlert;
         sun   = nightSun;

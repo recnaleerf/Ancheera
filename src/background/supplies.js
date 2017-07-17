@@ -28,7 +28,7 @@
   window.Supplies = {
     Initialize: function(callback) {
       var categories = ['supplyrecovery', 'supplypowerUp', 'supplytreasure', 'supplyraid', 'supplymaterial', 'supplyevent', 'supplycoop', 'supplymisc', 'supplydraw'];
-      Storage.GetMultiple(categories, function(response) {
+      Lyria.Storage.GetMultiple(categories, function(response) {
         var category;
         for (var i = 0; i < categories.length; i++) {
           category = categories[i].replace('supply', '');
@@ -47,7 +47,7 @@
         }
       });
 
-      Storage.GetMultiple(['planners'], function(response) {
+      Lyria.Storage.GetMultiple(['planners'], function(response) {
         if (response['planners'] !== undefined) {
           planners = response['planners'].planners;
         }
@@ -355,7 +355,7 @@
           lupi = 5000;
           break;
         }
-        Profile.AddLupi(lupi * amt);
+        Lyria.Profile.AddLupi(lupi * amt);
       }
     },
 
@@ -459,13 +459,13 @@
       planners[weaponBuild.type] = weaponBuild.build;
       planners.current           = weaponBuild.type;
       savePlanner();
-      Message.Post(devID, {'generatePlanner': buildWeapon(weaponBuild.type, weaponBuild.build)});
+      Lyria.Message.Post(devID, {'generatePlanner': buildWeapon(weaponBuild.type, weaponBuild.build)});
     },
 
     GetPlanner: function(devID, type) {
       if (type && planners[type]) {
-        Message.Post(devID, {'setPlannerDropdowns': {type: type, build: planners[type]}});
-        Message.Post(devID, {'generatePlanner': buildWeapon(type, planners[type])});
+        Lyria.Message.Post(devID, {'setPlannerDropdowns': {type: type, build: planners[type]}});
+        Lyria.Message.Post(devID, {'generatePlanner': buildWeapon(type, planners[type])});
       }
     }
   };
@@ -511,11 +511,11 @@
       if (intNum > 9999) {
         intNum = 9999;
       }
-      Message.PostAll({'setText': {
+      Lyria.Message.PostAll({'setText': {
         'id':    '#supply-' + supply.sequence + '-' + id + '-count',
         'value': intNum
       }});
-      Message.PostAll({'setPlannerItemAmount': {
+      Lyria.Message.PostAll({'setPlannerItemAmount': {
         'id':       id,
         'sequence': supply.sequence,
         'current':  number
@@ -553,7 +553,7 @@
       intNum = 9999;
     }
 
-    Message.PostAll({addItem: {
+    Lyria.Message.PostAll({addItem: {
       'id':       id,
       'category': category,
       'number':   intNum,
@@ -561,12 +561,12 @@
       'sequence': sequence,
       'tooltip':  createTooltip(name)
     }});
-    Message.PostAll({'setPlannerItemAmount': {
+    Lyria.Message.PostAll({'setPlannerItemAmount': {
       'id':       id,
       'sequence': sequence,
       'current':  number
     }});
-    
+
     if (responseList[category] !== undefined && responseList[category][id] !== undefined) {
       for (var i = 0; i < responseList[category][id].length; i++) {
         responseList[category][id][i](id, intNum);
@@ -619,13 +619,13 @@
             var tooltip  = '';
             var sequence = 0;
             if (category === 'currency') {
-              current = Profile.Get(id);
+              current = Lyria.Profile.Get(id);
               if (id === 'crystal') {
                 tooltip  = 'Crystals';
                 sequence = 0;
               }
             } else {
-              current       = Supplies.Get(id, category);
+              current       = Lyria.Supplies.Get(id, category);
               var itemDatum = weaponSupplyInfo[category][id];
               if (!itemDatum) {
               }
@@ -717,6 +717,7 @@
       'count':        count
     };
   };
+  
   var createPlannerSeraph = function(materialType, count) {
     return {
       'type':         'seraph',

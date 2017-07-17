@@ -13,7 +13,7 @@
   var decBP          = 0;
   var responseAP     = [];
 
-  window.APBP = {
+  window.Lyria.APBP = {
     VerifyAPBP: function(json) {
       var status;
       if (json.status !== undefined) {
@@ -276,11 +276,11 @@
     }
     currAP = parseInt(curr);
     maxAP  = parseInt(max);
-    Message.PostAll({setText: {
+    Lyria.Message.PostAll({ setText: {
       'id':    '#ap-number',
       'value': 'AP: ' + currAP + '/' + maxAP
     }});
-    Message.PostAll({setBar: {
+    Lyria.Message.PostAll({ setBar: {
       'id':    '#ap-bar',
       'value': ((currAP / maxAP) * 100) + '%'
     }});
@@ -288,12 +288,12 @@
 
   var setBP = function(curr, max) {
     currBP = parseInt(curr);
-    maxBP = parseInt(max);
-    Message.PostAll({setText: {
+    maxBP  = parseInt(max);
+    Lyria.Message.PostAll({ setText: {
       'id': '#bp-number',
       'value': 'EP: ' + currBP + '/' + maxBP
     }});
-    Message.PostAll({setBar: {
+    Lyria.Message.PostAll({ setBar: {
       'id': '#bp-bar',
       'value': ((currBP / maxBP) * 100) + '%'
     }});
@@ -317,7 +317,7 @@
     if (parseInt(str) <= 0) {
       str = '';
     }
-    Message.PostAll({setText: {
+    Lyria.Message.PostAll({setText: {
       'id': '#ap-time',
       'value': str
     }});
@@ -341,7 +341,7 @@
     if (parseInt(str) <= 0) {
       str = '';
     }
-    Message.PostAll({setText: {
+    Lyria.Message.PostAll({setText: {
       'id': '#bp-time',
       'value': str
     }});
@@ -359,7 +359,7 @@
             stopAPTimer();
             setAP(currAP + 1, maxAP);
             setAPTime();
-            Message.Notify('Your AP is full!', currAP + '/' + maxAP + ' AP\n' + currBP + '/' + maxBP + ' EP', 'apNotifications');
+            Lyria.Message.Notify('Your AP is full!', currAP + '/' + maxAP + ' AP\n' + currBP + '/' + maxBP + ' EP', 'apNotifications');
             return;
           }
           apTime.minute = 59;
@@ -397,7 +397,7 @@
             setBP(currBP + 1, maxBP);
             stopBPTimer();
             setBPTime();
-            Message.Notify('Your EP is full!', currAP + '/' + maxAP + ' AP\n' + currBP + '/' + maxBP + ' EP', 'epNotifications');
+            Lyria.Message.Notify('Your EP is full!', currAP + '/' + maxAP + ' AP\n' + currBP + '/' + maxBP + ' EP', 'epNotifications');
             return;
           }
           bpTime.minute = 59;

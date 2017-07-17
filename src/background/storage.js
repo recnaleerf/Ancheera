@@ -1,7 +1,7 @@
 (function() {
   var cache = {};
 
-  window.Storage = {
+  window.Lyria.Storage = {
     Set: function(key, value) {
       chrome.storage.local.set({[key]: value});
     },
@@ -26,7 +26,7 @@
           console.log(chrome.runtime.lastError);
         } else {
           if (Object.keys(response).length === 0 && response.constructor === Object) {
-            Storage.GetSync(key, sendResponse);
+            Lyria.Storage.GetSync(key, sendResponse);
           }
           else {
             sendResponse(response);
@@ -42,13 +42,13 @@
         } else {
           for (var i = 0; i < key.length; i++) {
             cache[key[i]] = response[key[i]];
-            Storage.Set(key[i], response[key[i]]);
+            Lyria.Storage.Set(key[i], response[key[i]]);
           }
           sendResponse(response);
         }
       });
     },
-    
+
     GetMultiple: function(key, sendResponse) {
       chrome.storage.local.get(key, function(response) {
         if (chrome.runtime.lastError) {
@@ -58,7 +58,7 @@
             cache[key[i]] = response[key[i]];
           }
           if (Object.keys(response).length === 0 && response.constructor === Object) {
-            Storage.GetMultipleSync(key, sendResponse);
+            Lyria.Storage.GetMultipleSync(key, sendResponse);
           } else {
             sendResponse(response);
           }

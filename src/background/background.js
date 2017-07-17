@@ -46,11 +46,11 @@
     chrome.runtime.openOptionsPage();
   });
 
-  Storage.GetMultiple(['version'], function(response) {
+  Lyria.Storage.GetMultiple(['version'], function(response) {
     currentVersion = response['version'];
     if (!currentVersion) {
       currentVersion = CURRENT_VERSION;
-      Storage.Set('version', CURRENT_VERSION);
+      Lyria.Storage.Set('version', CURRENT_VERSION);
     }
   });
 
@@ -64,14 +64,14 @@
     }
   };
 
-  Options.Initialize(function() {
-    Dailies.Initialize(function() {
-      Quest.Initialize(function() {
-        Casino.Initialize(function() {
-          Time.Initialize(function() {
-            Supplies.Initialize();
-            Profile.Initialize();
-            Buffs.Initialize();
+  Lyria.Options.Initialize(function() {
+    Lyria.Dailies.Initialize(function() {
+      Lyria.Quest.Initialize(function() {
+        Lyria.Casino.Initialize(function() {
+          Lyria.Time.Initialize(function() {
+            Lyria.Supplies.Initialize();
+            Lyria.Profile.Initialize();
+            Lyria.Buffs.Initialize();
             //Info.Initialize();
           });
         });
@@ -82,13 +82,13 @@
   var responseList = {};
   chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message.setOption) {
-      Options.Set(message.setOption.id, message.setOption.value);
+      Lyria.Options.Set(message.setOption.id, message.setOption.value);
     }
     if (message.getOption) {
       var id = message.getOption;
       sendResponse({
         'id': id,
-        'value': Options.Get(id)
+        'value': Lyria.Options.Get(id)
       });
     }
 
@@ -98,28 +98,28 @@
     if (message.content) {
       var msg = message.content;
       if (msg.assault) {
-        Time.SetAssaultTime(msg.assault.times);
+        Lyria.Time.SetAssaultTime(msg.assault.times);
       }
       if (msg.angel) {
-        Time.SetAngelHalo(msg.angel.delta, msg.angel.active);
+        Lyria.Time.SetAngelHalo(msg.angel.delta, msg.angel.active);
       }
       if (msg.defense) {
-        Time.SetDefenseOrder(msg.defense.time, msg.defense.active);
+        Lyria.Time.SetDefenseOrder(msg.defense.time, msg.defense.active);
       }
       if (msg.checkRaids) {
-        Quest.CheckJoinedRaids(msg.checkRaids.raids, msg.checkRaids.unclaimed, msg.checkRaids.type);
+        Lyria.Quest.CheckJoinedRaids(msg.checkRaids.raids, msg.checkRaids.unclaimed, msg.checkRaids.type);
       }
       if (msg.chips) {
-        Profile.SetChips(msg.chips.amount);
+        Lyria.Profile.SetChips(msg.chips.amount);
       }
       if (msg.profile) {
-        Profile.SetHomeProfile(msg.profile.rank, msg.profile.rankPercent, msg.profile.job, msg.profile.jobPercent, msg.profile.jobPoints, msg.profile.renown, msg.profile.prestige);
+        Lyria.Profile.SetHomeProfile(msg.profile.rank, msg.profile.rankPercent, msg.profile.job, msg.profile.jobPercent, msg.profile.jobPoints, msg.profile.renown, msg.profile.prestige);
       }
       if (msg.event) {
         //Quest.SetEvent(msg.event);
       }
       if (msg.coopCode) {
-        Quest.SetCoopCode(msg.coopCode, sender.tab.id);
+        Lyria.Quest.SetCoopCode(msg.coopCode, sender.tab.id);
       }
     }
   });
@@ -147,7 +147,7 @@
       if (message.initialize) {
         var response = [];
         response[0] = {
-          'setTheme': Options.Get('windowTheme')
+          'setTheme': Lyria.Options.Get('windowTheme')
         };
         response = response.concat(Profile.InitializeDev());
         response = response.concat(Time.InitializeDev());
@@ -190,7 +190,7 @@
         return;
       }
       if (message.getPlanner) {
-        Supplies.GetPlanner(message.id, message.getPlanner);
+        Lyria.Supplies.GetPlanner(message.id, message.getPlanner);
       }
       if (message.refresh) {
         chrome.tabs.reload(message.id);
@@ -212,19 +212,19 @@
           currentVersion = CURRENT_VERSION;
           Storage.Set('version', CURRENT_VERSION);
         }
-        Message.Post(message.id, {'setTheme': Options.Get('windowTheme', function(id, value) {
-          Message.PostAll({
+        Lyria.Message.Post(message.id, {'setTheme': Options.Get('windowTheme', function(id, value) {
+          Lyria.Message.PostAll({
             'setTheme': value
           });
-          Time.UpdateAlertColor();
+          Lyria.Time.UpdateAlertColor();
         })});
       }
       if (message.debug) {
-        Message.Notify('hey', 'its me ur brother', 'apNotifications');
-        APBP.SetMax();
+        Lyria.Message.Notify('hey', 'its me ur brother', 'apNotifications');
+        Lyria.APBP.SetMax();
       }
       if (message.weaponBuild) {
-        Supplies.BuildWeapon(message.id, message.weaponBuild);
+        Lyria.Supplies.BuildWeapon(message.id, message.weaponBuild);
       }
       if (message.consoleLog) {
         console.log(message.consoleLog);
@@ -236,32 +236,32 @@
             message.request.url.indexOf('/user/content/index?') !== -1 ||
             message.request.url.indexOf('/quest/content/') !== -1 ||
             message.request.url.indexOf('/coopraid/content/') !== -1) {
-          APBP.VerifyAPBP(message.request.response);
-          Profile.SetLupiCrystal(message.request.response);
+          Lyria.APBP.VerifyAPBP(message.request.response);
+          Lyria.Profile.SetLupiCrystal(message.request.response);
         }
         //check entering raid resources
         if (message.request.url.indexOf('/quest/treasure_raid')  !== -1) {
-          Supplies.RaidTreasureInfo(message.request.response);
+          Lyria.Supplies.RaidTreasureInfo(message.request.response);
         }
         //check limited quest
         if (message.request.url.indexOf('/quest/check_quest_start/') !== -1) {
-          Quest.CheckDailyRaid(message.request.response, message.request.url);
+          Lyria.Quest.CheckDailyRaid(message.request.response, message.request.url);
         }
         if (message.request.url.indexOf('/quest/content/newindex/') !== -1) {
-          Quest.UpdateInProgress(message.request.response, message.id);
+          Lyria.Quest.UpdateInProgress(message.request.response, message.id);
         }
         //initialize quest -> SELECTING QUEST
         if (message.request.url.indexOf('/quest/quest_data/') !== -1) {
-          APBP.InitializeQuest(message.request.response);
+          Lyria.APBP.InitializeQuest(message.request.response);
         }
         //start quest -> ACTUALLY ENTER THE QUEST
         if (message.request.url.indexOf('/quest/create_quest?') !== -1) {
-          Quest.CreateQuest(message.request.response, message.request.payload, message.id);
-          APBP.StartQuest(message.request.response, message.request.payload);
-          Dailies.DecPrimarchs(message.request.payload);
+          Lyria.Quest.CreateQuest(message.request.response, message.request.payload, message.id);
+          Lyria.APBP.StartQuest(message.request.response, message.request.payload);
+          Lyria.Dailies.DecPrimarchs(message.request.payload);
         }
         if (message.request.url.indexOf('/quest/raid_info?') !== -1) {
-          Quest.CheckMulti(message.request.response);
+          Lyria.Quest.CheckMulti(message.request.response);
           //is_multi
         }
 
@@ -271,8 +271,8 @@
         //   Profile.CompleteQuest(message.request.response.option.result_data);
         // }
         if (message.request.url.indexOf('/result/data/') !== -1) {
-          Supplies.GetLoot(message.request.response);
-          Profile.CompleteQuest(message.request.response);
+          Lyria.Supplies.GetLoot(message.request.response);
+          Lyria.Profile.CompleteQuest(message.request.response);
         }
         // //initialize raid -> SELECTING RAID
         // if(message.request.url.indexOf('/quest/assist_list') !== -1) {
@@ -284,8 +284,8 @@
         // }
         //join raid
         if (message.request.url.indexOf('/quest/raid_deck_data_create') !== -1) {
-          APBP.StartRaid(message.request.response, message.request.payload);
-          Quest.CreateRaid(message.request.response, message.id);
+          Lyria.APBP.StartRaid(message.request.response, message.request.payload);
+          Lyria.Quest.CreateRaid(message.request.response, message.id);
         }
         // if(message.request.url.indexOf('/check_reward/') !== -1) {
         //   Quest.CompleteQuest(message.request.url);
@@ -298,187 +298,190 @@
         //     Dailies.CompleteRaid(message.request.response.option.result_data);
         // }
         if (message.request.url.indexOf('/resultmulti/data/') !== -1) {
-          Supplies.GetLoot(message.request.response);
-          Profile.CompleteRaid(message.request.response);
-          Dailies.CompleteCoop(message.request.response);
-          Dailies.CompleteRaid(message.request.response);
+          Lyria.Supplies.GetLoot(message.request.response);
+          Lyria.Profile.CompleteRaid(message.request.response);
+          Lyria.Dailies.CompleteCoop(message.request.response);
+          Lyria.Dailies.CompleteRaid(message.request.response);
         }
         if (message.request.url.indexOf('retire.json') !== -1) {
-          Quest.AbandonQuest(message.request.payload);
+          Lyria.Quest.AbandonQuest(message.request.payload);
         }
 
         //restore ap/bp
         if (message.request.url.indexOf('/quest/user_item') !== -1) {
-          APBP.RestoreAPBP(message.request.response);
-          Supplies.UseRecovery(message.request.response, message.request.payload);
+          Lyria.APBP.RestoreAPBP(message.request.response);
+          Lyria.Supplies.UseRecovery(message.request.response, message.request.payload);
         }
         //gacha
         if (message.request.url.indexOf('/gacha/list?_=') !== -1) {
-          Dailies.SetDraws(message.request.response);
+          Lyria.Dailies.SetDraws(message.request.response);
         }
         if (message.request.url.indexOf('/gacha/normal/result//normal/6?_=') !== -1) {
-          Dailies.DecDraws(message.request.response);
-          Profile.LupiDraw(message.request.response);
+          Lyria.Dailies.DecDraws(message.request.response);
+          Lyria.Profile.LupiDraw(message.request.response);
         }
         if (message.request.url.indexOf('/gacha/result//legend') !== -1) {
-          Dailies.DecDraws(message.request.response);
+          Lyria.Dailies.DecDraws(message.request.response);
           //Profile.CrystalDraw(message.request.response);
         }
         //co-op dailies
         if (message.request.url.indexOf('/coopraid/daily_mission?_=') !== -1) {
-          Dailies.SetCoop(message.request.response);
+          Lyria.Dailies.SetCoop(message.request.response);
         }
         //casino list
         if (message.request.url.indexOf('/casino/article_list/1/1?_=') !== -1 || message.request.url.indexOf('/casino/article_list/undefined/1?_=') !== -1) {
-          Casino.SetCasino1(message.request.response);
-          Profile.SetChips(message.request.response.medal.number);
+          Lyria.Casino.SetCasino1(message.request.response);
+          Lyria.Profile.SetChips(message.request.response.medal.number);
         }
         if (message.request.url.indexOf('/casino/article_list/undefined/2?_=') !== -1) {
-          Casino.SetCasino2(message.request.response);
-          Profile.SetChips(message.request.response.medal.number);
+          Lyria.Casino.SetCasino2(message.request.response);
+          Lyria.Profile.SetChips(message.request.response.medal.number);
         }
         //casino buy
         if (message.request.url.indexOf('/casino/exchange?_=') !== -1) {
-          Casino.BuyCasino(message.request.response, message.request.payload);
-          Supplies.BuyCasino(message.request.response, message.request.payload);
+          Lyria.Casino.BuyCasino(message.request.response, message.request.payload);
+          Lyria.Supplies.BuyCasino(message.request.response, message.request.payload);
         }
         if (message.request.url.indexOf('/twitter/twitter_info/') !== -1) {
-          Dailies.CheckTweet(message.request.response);
-          Quest.CopyTweet(message.request.response);
+          Lyria.Dailies.CheckTweet(message.request.response);
+          Lyria.Quest.CopyTweet(message.request.response);
         }
         if (message.request.url.indexOf('/twitter/tweet?_=') !== -1) {
-          Dailies.UseTweet(message.request.response);
+          Lyria.Dailies.UseTweet(message.request.response);
         }
         if (message.request.url.indexOf('/item/normal_item_list') !== -1) {
-          Supplies.SetRecovery(message.request.response);
+          Lyria.Supplies.SetRecovery(message.request.response);
         }
         if (message.request.url.indexOf('/item/evolution_items') !== -1) {
-          Supplies.SetPowerUp(message.request.response);
+          Lyria.Supplies.SetPowerUp(message.request.response);
         }
         if (message.request.url.indexOf('/item/article_list') !== -1) {
-          Supplies.SetTreasure(message.request.response);
+          Lyria.Supplies.SetTreasure(message.request.response);
         }
         if (message.request.url.indexOf('/item/gacha_ticket_list') !== -1) {
-          Supplies.SetDraw(message.request.response);
+          Lyria.Supplies.SetDraw(message.request.response);
         }
         if (message.request.url.indexOf('/present/possessed') !== -1) {
-          Profile.CheckWeaponSummon(message.request.response);
+          Lyria.Profile.CheckWeaponSummon(message.request.response);
         }
         if (message.request.url.indexOf('/present/receive?') !== -1) {
-          Supplies.GetGift(message.request.response);
-          Profile.GetGift(message.request.response);
+          Lyria.Supplies.GetGift(message.request.response);
+          Lyria.Profile.GetGift(message.request.response);
         }
         if (message.request.url.indexOf('/present/receive_all?') !== -1 || message.request.url.indexOf('/present/term_receive_all?') !== -1) {
-          Supplies.GetAllGifts(message.request.response);
-          Profile.GetAllGifts(message.request.response);
+          Lyria.Supplies.GetAllGifts(message.request.response);
+          Lyria.Profile.GetAllGifts(message.request.response);
         }
         //treasure trade purchase
         if (message.request.url.indexOf('/shop_exchange/purchase/') !== -1) {
-          Supplies.PurchaseItem(message.request.response);
-          Profile.PurchaseItem(message.request.response);
-          Dailies.PurchaseDistinction(message.request.response);
+          Lyria.Supplies.PurchaseItem(message.request.response);
+          Lyria.Profile.PurchaseItem(message.request.response);
+          Lyria.Dailies.PurchaseDistinction(message.request.response);
         }
         if (message.request.url.indexOf('/weapon/list/') !== -1) {
-          Profile.SetWeaponNumber(message.request.response);
+          Lyria.Profile.SetWeaponNumber(message.request.response);
         }
         if (message.request.url.indexOf('/npc/list/') !== -1) {
-          Profile.SetCharacterNumber(message.request.response, message.request.url);
+          Lyria.Profile.SetCharacterNumber(message.request.response, message.request.url);
         }
         if (message.request.url.indexOf('/summon/list/') !== -1) {
-          Profile.SetSummonNumber(message.request.response);
+          Lyria.Profile.SetSummonNumber(message.request.response);
         }
         if (message.request.url.indexOf('/container/move?') !== -1) {
-          Profile.MoveFromStash(message.request.response);
+          Lyria.Profile.MoveFromStash(message.request.response);
         }
         if (message.request.url.indexOf('/listall/move?') !== -1) {
-          Profile.MoveToStash(message.request.response);
+          Lyria.Profile.MoveToStash(message.request.response);
         }
         if (message.request.url.indexOf('/shop/point_list') !== -1) {
-          Profile.SetDrops(message.request.response);
+          Lyria.Profile.SetDrops(message.request.response);
         }
         //Moon shop
         if (message.request.url.indexOf('/shop_exchange/article_list/5/1/1/null/null/null?') !== -1 || message.request.url.indexOf('/shop_exchange/article_list/5/1/1/null/null/3?') !== -1) {
-          Dailies.CheckMoons(message.request.response);
+          Lyria.Dailies.CheckMoons(message.request.response);
         }
         //do shop
         if (message.request.url.indexOf('/shop_exchange/article_list/10/1/1/null/null/') !== -1) {
-          Profile.SetDefense(message.request.response);
+          Lyria.Profile.SetDefense(message.request.response);
           //Dailies.CheckDefense(message.request.response, message.request.url);
         }
         //prestige
         if (message.request.url.indexOf('/shop_exchange/article_list/6/1/') !== -1) {
-          Dailies.SetDistinctions(message.request.response);
+          Lyria.Dailies.SetDistinctions(message.request.response);
           //Dailies.CheckDefense(message.request.response, message.request.url);
         }
         if (message.request.url.indexOf('/shop/purchase') !== -1) {
-          Profile.SpendCrystals(message.request.response);
+          Lyria.Profile.SpendCrystals(message.request.response);
         }
         if (message.request.url.indexOf('mbp/mbp_info') !== -1 || message.request.url.indexOf('/user/content/index?') !== -1) {
-          Dailies.CheckRenown(message.request.response);
+          Lyria.Dailies.CheckRenown(message.request.response);
         }
         if (message.request.url.indexOf('evolution_weapon/evolution?') !== -1 || message.request.url.indexOf('evolution_summon/evolution?') !== -1) {
-          Profile.Uncap(message.request.response);
-          Profile.BuyUncap();
+          Lyria.Profile.Uncap(message.request.response);
+          Lyria.Profile.BuyUncap();
         }
         if (message.request.url.indexOf('evolution_weapon/item_evolution?') !== -1 || message.request.url.indexOf('evolution_summon/item_evolution?') !== -1) {
-          Supplies.Uncap(message.request.response);
-          Profile.BuyUncap();
+          Lyria.Supplies.Uncap(message.request.response);
+          Lyria.Profile.BuyUncap();
         }
         if (message.request.url.indexOf('item/evolution_items/') !== -1) {
-          Supplies.CheckUncapItem(message.request.response);
+          Lyria.Supplies.CheckUncapItem(message.request.response);
         }
         if (message.request.url.indexOf('item/evolution_item_one') !== -1) {
-          Supplies.SetUncapItem(message.request.response);
-          Profile.SetUncapItem(message.request.response);
+          Lyria.Supplies.SetUncapItem(message.request.response);
+          Lyria.Profile.SetUncapItem(message.request.response);
         }
         if (message.request.url.indexOf('weapon/weapon_base_material?') !== -1 || message.request.url.indexOf('summon/summon_base_material?') !== -1) {
           Supplies.SetUncap(message.request.response);
-          Profile.SetUncap(message.request.response, message.request.url);
+          Lyria.Profile.SetUncap(message.request.response, message.request.url);
         }
         if (message.request.url.indexOf('npc/evolution_materials') !== -1) {
-          Supplies.SetNpcUncap(message.request.response);
+          Lyria.Supplies.SetNpcUncap(message.request.response);
         }
         if (message.request.url.indexOf('evolution_npc/item_evolution?') !== -1) {
-          Supplies.NpcUncap(message.request.response);
-          Profile.BuyUncap();
+          Lyria.Supplies.NpcUncap(message.request.response);
+          Lyria.Profile.BuyUncap();
         }
         if (message.request.url.indexOf('weapon/weapon_material') !== -1 ||
             message.request.url.indexOf('summon/summon_material') !== -1 ||
             message.request.url.indexOf('npc/npc_material') !== -1) {
-          Profile.SetUpgrade(message.request.response, message.request.url);
+          Lyria.Profile.SetUpgrade(message.request.response, message.request.url);
         }
         if (message.request.url.indexOf('enhancement_weapon/enhancement') !== -1 ||
             message.request.url.indexOf('enhancement_summon/enhancement') !== -1 ||
             message.request.url.indexOf('enhancement_npc/enhancement') !== -1) {
-          Profile.Upgrade(message.request.response);
+          Lyria.Profile.Upgrade(message.request.response);
         }
 
         if (message.request.url.indexOf('/shop_exchange/activate_personal_support?_=') !== -1) {
-          Buffs.StartBuff(message.request.response, message.request.payload);
+          Lyria.Buffs.StartBuff(message.request.response, message.request.payload);
         }
         if (message.request.url.indexOf('/sell_article/execute') !== -1) {
-          Supplies.SellCoop(message.request.response, message.request.payload);
+          Lyria.Supplies.SellCoop(message.request.response, message.request.payload);
         }
-        if (message.request.url.indexOf('/raid/start.json?_=') !== -1 || message.request.url.indexOf('/multiraid/start.json?_=') !== -1) {
-          Quest.StartBattle(message.request.response, message.id);
+        if (message.request.url.indexOf('/raid/start.json?_=') !== -1 ||
+            message.request.url.indexOf('/multiraid/start.json?_=') !== -1) {
+          Lyria.Quest.StartBattle(message.request.response, message.id);
         }
-        if (message.request.url.indexOf('/normal_attack_result.json?_=') !== -1 || message.request.url.indexOf('/ability_result.json?_=') !== -1 || message.request.url.indexOf('/summon_result.json?_=') !== -1) {
-          Quest.BattleAction(message.request.response, message.request.payload, message.id);
+        if (message.request.url.indexOf('/normal_attack_result.json?_=') !== -1 ||
+            message.request.url.indexOf('/ability_result.json?_=') !== -1 ||
+            message.request.url.indexOf('/summon_result.json?_=') !== -1) {
+          Lyria.Quest.BattleAction(message.request.response, message.request.payload, message.id);
         }
         if (message.request.url.indexOf('/quest/init_list') !== -1) {
-          Quest.SetCurrentQuest(message.request.response);
+          Lyria.Quest.SetCurrentQuest(message.request.response);
         }
         if (message.request.url.indexOf('/quest/assist_list') !== -1) {
-          Quest.CheckJoinedRaids(message.request.response);
+          Lyria.Quest.CheckJoinedRaids(message.request.response);
         }
         if (message.request.url.indexOf('/gacha/list?') !== -1) {
-          Dailies.CheckGacha(message.request.response);
+          Lyria.Dailies.CheckGacha(message.request.response);
         }
         if (message.request.url.indexOf('/gacha/legend/campaign') !== -1) {
-          Dailies.RollCampaign(message.request.response, message.request.payload);
+          Lyria.Dailies.RollCampaign(message.request.response, message.request.payload);
         }
         if (message.request.url.indexOf('/quest/content/newextra') !== -1) {
-          Dailies.SetPrimarchs(message.request.response);
+          Lyria.Dailies.SetPrimarchs(message.request.response);
         }
       }
     };
@@ -498,7 +501,7 @@
   });
 
 // TODO: I think this is supposed to be the contents of message.js
-  window.Message = {
+  window.Lyria.Message = {
     PostAll: function(message) {
       Object.keys(connections).forEach(function(key) {
         if (message !== undefined) {
@@ -519,8 +522,8 @@
     },
 
     Notify: function(title, message, source) {
-      if (Options.Get('enableNotifications') && Options.Get(source)) {
-        var theme = Options.Get('notificationTheme');
+      if (Lyria.Options.Get('enableNotifications') && Lyria.Options.Get(source)) {
+        var theme = Lyria.Options.Get('notificationTheme');
         if (theme === 'Random') {
           var rand = Math.random() * 3;
           if (rand < 1) {
@@ -534,7 +537,7 @@
         if (new Date().getMonth() === 3 && new Date().getDate() === 1) {
           theme = 'Garbage';
         }
-        if (!Options.Get('muteNotifications')) {
+        if (!Lyria.Options.Get('muteNotifications')) {
           var sound = new Audio('src/assets/sounds/' + theme + '.wav');
           sound.play();
         }

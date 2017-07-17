@@ -46,13 +46,13 @@
       '5':          200
     }
   };
-  window.Casino = {
+  window.Lyria.Casino = {
     Initialize: function(callback) {
-      Storage.Get(['casino'], function(response) {
+      Lyria.Storage.Get(['casino'], function(response) {
         if (response['casino'] !== undefined) {
           casino = response['casino'];
         } else {
-          Storage.Set('casino', casino);
+          Lyria.Storage.Set('casino', casino);
         }
         if (callback !== undefined) {
           callback();
@@ -158,8 +158,8 @@
       casino.dailies[key].updated = true;
       if (casino.dailies[key].amount !== dailies[key]) {
         casino.dailies[key].amount = dailies[key];
-        Message.PostAll(getJquery('dailies', key));
-        Message.PostAll(checkCollapse('dailies'));
+        Lyria.Message.PostAll(getJquery('dailies', key));
+        Lyria.Message.PostAll(checkCollapse('dailies'));
         updated = true;
       }
     });
@@ -167,14 +167,14 @@
       casino.monthlies[key].updated = true;
       if (casino.monthlies[key].amount !== monthlies[key]) {
         casino.monthlies[key].amount = monthlies[key];
-        Message.PostAll(getJquery('monthlies', key));
-        Message.PostAll(checkCollapse('monthlies'));
+        Lyria.Message.PostAll(getJquery('monthlies', key));
+        Lyria.Message.PostAll(checkCollapse('monthlies'));
         updated = true;
       }
     });
 
     if (updated) {
-      Storage.Set('casino', casino);
+      Lyria.Storage.Set('casino', casino);
     }
   };
 
@@ -207,7 +207,7 @@
     Object.keys(casino.monthlies).forEach(function(key) {
       casino.monthlies[key].updated = false;
     });
-    Storage.Set('casino', casino);
+    Lyria.Storage.Set('casino', casino);
   };
 
   var checkUpdated = function() {

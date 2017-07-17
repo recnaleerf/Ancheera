@@ -115,7 +115,7 @@
 
   window.Options = {
     Initialize: function(callback) {
-      Storage.Get(['options'], function(response) {
+      Lyria.Storage.Get(['options'], function(response) {
         if (response.options !== undefined) {
           if (response.options['primarchDaily'] == undefined) {
             for (var key in options) {
@@ -124,7 +124,7 @@
               }
             }
             options = response.options;
-            Storage.Set('options', options);
+            Lyria.Storage.Set('options', options);
           }
           else {
             options = response.options;
@@ -134,9 +134,9 @@
             }
           }
         } else {
-          Storage.Set('options', options);
+          Lyria.Storage.Set('options', options);
         }
-        Profile.Get('level', function(value) {
+        Lyria.Profile.Get('level', function(value) {
           if (!isHL && value >= 101) {
             isHL = true;
             for (var i = 0; i < hlRaids.length; i++) {
@@ -171,7 +171,7 @@
   var setOption = function(id, value) {
     if (options[id] !== value) {
       options[id] = value;
-      Storage.Set('options', options);
+      Lyria.Storage.Set('options', options);
       if (responseList[id] !== undefined) {
         for (var i = 0; i < responseList[id].length; i++) {
           responseList[id][i](id, value);

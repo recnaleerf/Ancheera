@@ -18,7 +18,7 @@
     ],
     "globals": {
         "chrome": true,
-        "Message": true
+        "Lyria": true
     },
     "rules": {
         "indent": [
