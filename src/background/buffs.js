@@ -6,7 +6,7 @@
       endTime: endTime
     };
   };
-  var supportURL = 'http://gbf.game-a1.mbga.jp/assets_en/img/sp/assets/item/support/support_';
+  var supportURL = 'http://gbf.game-a1.mbga.jp/assets_en/img/sp/assets/item/support/support';
   var buffInfo = {
     '1': 20501,
     '2': 20401,

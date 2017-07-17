@@ -416,6 +416,7 @@
       currency2: currency2,
     };
   };
+
   events.push(createEvent('#event/teamraid024'));
 
   window.Lyria.Quest = {
@@ -428,7 +429,7 @@
         currRaidList.push(raidList[i]);
       }
 
-      Storage.GetMultiple(['quests'], function(response) {
+      Lyria.Storage.GetMultiple(['quests'], function(response) {
         if (response['quests'] !== undefined) {
           var modified = false;
           if (response['quests']['301061'] == undefined) {
@@ -834,9 +835,11 @@
     },
 
     UseSummon: function(json) {
+      console.log(json);
     },
 
     Attack: function(json) {
+      console.log(json);
     },
 
     AbandonQuest: function(payload) {
@@ -855,6 +858,7 @@
     },
 
     CheckJoinedRaids: function(json) {
+      console.log(json);
     },
 
     SetCoopCode: function(code, devID) {

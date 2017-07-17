@@ -517,7 +517,7 @@
       }
     }
   };
-  var setDailies = function(array, override) {//category, value) {
+  var setDailies = function(array, override) { //category, value) {
     var category;
     var value;
     var updated = false;
@@ -547,7 +547,7 @@
 
   var checkCollapse = function(category) {
     var collapse = true;
-    if (category[0] === 'draw-rupie' || category[0] === 'tweet' || category[0] === 'freeSingleRoll' || category[0] === 'primarchs') {
+    if (['draw-rupie', 'tweet', 'freeSingleRoll', 'primarchs'].includes(category[0])) {
       category[0] = 'misc';
       if (dailies['draw-rupie'] !==  0 || dailies['tweet']) {
         collapse = false;
@@ -598,12 +598,14 @@
         }
       }
     }
+
     var id= '#collapse-dailies-' + category[0];
     return {'collapsePanel': {
       'id':    id,
       'value': collapse
     }};
   };
+
   var getJquery = function(category) {
     var id    = '#dailies';
     var value = dailies;
@@ -644,7 +646,7 @@
       }
     }
 
-    return {'setText': {
+    return { 'setText': {
       'id':    id,
       'value': str
     }};

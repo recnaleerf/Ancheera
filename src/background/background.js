@@ -146,16 +146,14 @@
       }
       if (message.initialize) {
         var response = [];
-        response[0] = {
-          'setTheme': Lyria.Options.Get('windowTheme')
-        };
-        response = response.concat(Lyria.Profile.InitializeDev());
-        response = response.concat(Lyria.Time.InitializeDev());
-        response = response.concat(Lyria.Dailies.InitializeDev());
-        response = response.concat(Lyria.Casino.InitializeDev());
-        response = response.concat(Lyria.Supplies.InitializeDev());
-        response = response.concat(Lyria.Buffs.InitializeDev());
-        response = response.concat(Lyria.Quest.InitializeDev());
+        response[0]  = { 'setTheme': Lyria.Options.Get('windowTheme') };
+        response     = response.concat(Lyria.Profile.InitializeDev());
+        response     = response.concat(Lyria.Time.InitializeDev());
+        response     = response.concat(Lyria.Dailies.InitializeDev());
+        response     = response.concat(Lyria.Casino.InitializeDev());
+        response     = response.concat(Lyria.Supplies.InitializeDev());
+        response     = response.concat(Lyria.Buffs.InitializeDev());
+        response     = response.concat(Lyria.Quest.InitializeDev());
         connections[message.id].postMessage({initialize: response});
         return;
       }
@@ -175,7 +173,7 @@
               index = tabs[0].url.indexOf('#event/');
               if (index !== -1 && tabs[0].url.indexOf('/supporter/') !== -1)
               {
-                Lyria.Message.PostAll({'setClick': {
+                Lyria.Message.PostAll({ 'setClick': {
                   'id':    '#quest-repeat',
                   'value': tabs[0].url.slice(index)
                 }});
@@ -212,23 +210,26 @@
           currentVersion = CURRENT_VERSION;
           Lyria.Storage.Set('version', CURRENT_VERSION);
         }
-        Lyria.Message.Post(message.id, {'setTheme': Lyria.Options.Get('windowTheme', function(id, value) {
+        Lyria.Message.Post(message.id, { 'setTheme': Lyria.Options.Get('windowTheme', function(id, value) {
           Lyria.Message.PostAll({
             'setTheme': value
           });
           Lyria.Time.UpdateAlertColor();
         })});
       }
+
       if (message.debug) {
         Lyria.Message.Notify('hey', 'its me ur brother', 'apNotifications');
         Lyria.APBP.SetMax();
       }
+
       if (message.weaponBuild) {
         Lyria.Supplies.BuildWeapon(message.id, message.weaponBuild);
       }
       if (message.consoleLog) {
         console.log(message.consoleLog);
       }
+
       if (message.request) {
         //verify current ap/ep
         if (message.request.url.indexOf('/user/status?') !== -1 ||
