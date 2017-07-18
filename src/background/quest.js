@@ -923,11 +923,11 @@
         url   = '';
       }
       Lyria.Message.PostAll({'setImage': {
-        'id': '#quest-image-' + i,
+        'id':    '#quest-image-' + i,
         'value': image
       }});
       Lyria.Message.PostAll({'setClick': {
-        'id': '#quest-image-' + i,
+        'id':   '#quest-image-' + i,
         'value': url
       }});
     }

@@ -411,24 +411,28 @@
     }
     jQueryCache[id].text(value);
   };
+  
   var setImage = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
     }
     jQueryCache[id].attr('src', value);
   };
+
   var setHeight = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
     }
     jQueryCache[id].height(value);
   };
+
   var setOpacity = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
     }
     jQueryCache[id].fadeTo('fast', value);
   };
+
   var hideObject = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
@@ -439,18 +443,21 @@
       jQueryCache[id].show();
     }
   };
+
   var setBar = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
     }
     jQueryCache[id].css('width', value);
   };
+
   var setColor = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
     }
     jQueryCache[id].css('background-color', value);
   };
+
   var setTime = function(id, jstTime, normalTime) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
@@ -465,6 +472,7 @@
       jQueryCache[id].text(normalTime);
     }
   };
+
   var collapsePanel = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
@@ -476,6 +484,7 @@
       jQueryCache[id].collapse('show');
     }
   };
+
   var appendObject = function(id, targetID) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
@@ -486,6 +495,7 @@
 
     jQueryCache[targetID].append(jQueryCache[id]);
   };
+
   var setClick = function(id, value) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
@@ -497,6 +507,7 @@
       jQueryCache[id].removeClass('open-url');
     }
   };
+
   var setTooltip = function(id, text) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
@@ -506,6 +517,7 @@
       jQueryCache[id].tooltip('show');
     }
   };
+
   var beforeObject = function(id, targetID) {
     if (jQueryCache[id] === undefined) {
       jQueryCache[id] = $(id);
@@ -515,6 +527,7 @@
     }
     jQueryCache[targetID].before(jQueryCache[id]);
   };
+
   var addItem = function(id, category, number, name, sequence, tooltip) {
     var newItem = $supplyItem.clone();
     newItem.attr('id', 'supply-' + sequence + '-' + id);
@@ -766,7 +779,7 @@
         raidUrl += '/0/' + animeIDs[0];
       }
       newRaid.click(function() {
-        Message.Post({'openURL': raidUrl});
+        Lyria.Message.Post({'openURL': raidUrl});
       });
     }
     newRaid.data('id', id);
@@ -776,6 +789,7 @@
     newRaid.find('.quest-count').first().attr('id', 'remaining-' + id);
     newRaid.find('.quest-count').first().data('id', id);
     newRaid.find('.quest-count').first().text(amount + '/' + max);
+
     if (animeIDs !== null) {
       newRaid.find('.item-img').each(function(i) {
         $(this).attr('src', imageURL + 'items/' + animeIDs[i] + '.jpg');
@@ -789,6 +803,7 @@
     }
     $dailyRaidList.append(newRaid);
   };
+
   var addDistinction = function(id, amount, max, isEnabled) {
     var newDistinction = $dailyDistinction.clone();
     newDistinction.data('id', id);
