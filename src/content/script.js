@@ -5,7 +5,7 @@
 
   var tempImageURLS = {};
 
-  chrome.runtime.onMessage.addListener(function(message, sender, sendResponse){
+  chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     if (message.pageLoad) {
       pageLoad(message.pageLoad);
     }
@@ -80,17 +80,17 @@
       }
     } else if (url.indexOf('#mypage') !== -1) {
       if ($('.txt-do-remain-on-button').length !== 0) {
-        messageDevTools({defense:{
+        messageDevTools({ defense:{
           'time':   parseInt($('.txt-do-remain-on-button').text()),
           'active': false
         }});
       } else if ($('.do-underway').length !== 0) {
-        messageDevTools({defense:{
+        messageDevTools({ defense:{
           'time':   -1,
           'active': true
         }});
       } else {
-        messageDevTools({defense:{
+        messageDevTools({ defense:{
           'time':   -1,
           'active': false
         }});
@@ -101,7 +101,7 @@
       var $prtInfoPossessed = $prtUserInfo.children('.prt-info-possessed');
       var $prtMbpPossessed  = $prtUserInfo.children('#mbp-status');
 
-      messageDevTools({profile: {
+      messageDevTools({ profile: {
         'rank':        $prtInfoStatus.find('.txt-rank-value').attr('title'),
         'rankPercent': $prtInfoStatus.find('.prt-rank-gauge-inner').attr('style'),
         'job':         $prtInfoStatus.find('.txt-joblv-value').attr('title'),
@@ -127,19 +127,19 @@
               if (time.length !== 0 && time.text().indexOf('Starts') !== -1) {
                 var num = time.first().text();
                 if (num.indexOf('hour') !== -1) {
-                  messageDevTools({angel: {
-                    'delta': parseInt(num.substring(10, num.indexOf(' hour'))) + 1,
+                  messageDevTools({ angel: {
+                    'delta':  parseInt(num.substring(10, num.indexOf(' hour'))) + 1,
                     'active': false
                   }});
                 } else if (num.indexOf('minutes') !== -1) {
-                  messageDevTools({angel: {
-                    'delta': 1,
+                  messageDevTools({ angel: {
+                    'delta':  1,
                     'active': false
                   }});
                 }
               } else {
-                messageDevTools({angel: {
-                  'delta': 1,
+                messageDevTools({ angel: {
+                  'delta':  1,
                   'active': true
                 }});
               }
@@ -154,12 +154,12 @@
   };
 
   var messageDevTools = function(message) {
-    chrome.runtime.sendMessage({content: message});
+    chrome.runtime.sendMessage({ content: message });
   };
 
   var consoleLog = function(sender, message) {
     chrome.runtime.sendMessage({consoleLog:{
-      'sender': sender,
+      'sender':  sender,
       'message': message
     }});
   };

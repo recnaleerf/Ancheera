@@ -156,27 +156,26 @@
         response = response.concat(Supplies.InitializeDev());
         response = response.concat(Buffs.InitializeDev());
         response = response.concat(Quest.InitializeDev());
-        connections[message.id].postMessage({initialize: response});
+        connections[message.id].postMessage({ initialize: response });
         return;
       }
       if (message.pageLoad) {
         pageLoaded = true;
-        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs) {
           if (tabs.length > 0) {
             chrome.tabs.sendMessage(tabs[0].id, {pageLoad: tabs[0].url});
             connections[message.id].postMessage({pageLoad: tabs[0].url});
             var index = tabs[0].url.indexOf('#quest/supporter/');
             if (index !== -1) {
-              Message.PostAll({'setClick': {
-                'id': '#quest-repeat',
+              Message.PostAll({ 'setClick': {
+                'id':    '#quest-repeat',
                 'value': tabs[0].url.slice(index)
               }});
             } else {
               index = tabs[0].url.indexOf('#event/');
-              if (index !== -1 && tabs[0].url.indexOf('/supporter/') !== -1)
-              {
-                Message.PostAll({'setClick': {
-                  'id': '#quest-repeat',
+              if (index !== -1 && tabs[0].url.indexOf('/supporter/') !== -1) {
+                Message.PostAll({ 'setClick': {
+                  'id':    '#quest-repeat',
                   'value': tabs[0].url.slice(index)
                 }});
               }
@@ -186,7 +185,7 @@
         return;
       }
       if (message.openURL) {
-        chrome.tabs.update(message.id, {'url': message.openURL});
+        chrome.tabs.update(message.id, { 'url': message.openURL });
         return;
       }
       if (message.getPlanner) {
@@ -208,7 +207,7 @@
             currentVersion = patchNoteList[i];
             note += generateNote(currentVersion);
           }
-          Message.Post(message.id, {'setMessage': note});
+          Message.Post(message.id, { 'setMessage': note });
           currentVersion = CURRENT_VERSION;
           Storage.Set('version', CURRENT_VERSION);
         }
@@ -219,16 +218,20 @@
           Time.UpdateAlertColor();
         })});
       }
+
       if (message.debug) {
         Message.Notify('hey', 'its me ur brother', 'apNotifications');
         APBP.SetMax();
       }
+
       if (message.weaponBuild) {
         Supplies.BuildWeapon(message.id, message.weaponBuild);
       }
+
       if (message.consoleLog) {
         console.log(message.consoleLog);
       }
+
       if (message.request) {
         //verify current ap/ep
         if (message.request.url.indexOf('/user/status?') !== -1 ||

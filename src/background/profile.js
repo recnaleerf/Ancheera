@@ -363,7 +363,7 @@
     GetGift: function(json) {
       var category = getCategory(json.item_kind_id);
       if (category !== undefined) {
-        setProfile({[category]: profile[category] + parseInt(json.number)});
+        setProfile({ [category]: profile[category] + parseInt(json.number) });
       }
     },
 

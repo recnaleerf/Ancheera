@@ -39,7 +39,7 @@
 
   "content_scripts": [{
     "matches": ["http://gbf.game.mbga.jp/*", "http://game.granbluefantasy.jp/*"],
-    "js": ["lib/jquery-3.0.0.min.js", "src/content/script.js"],
+    "js": ["lib/jquery-3.0.0.min.js", "lib/Chart.bundle.min.js", "src/content/script.js"],
     "run_at": "document_end"
   }],
 
