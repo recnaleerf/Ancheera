@@ -90,6 +90,13 @@
     '301051' : null,
     '300471' : null,
     '301061' : null,
+
+    '302751' : null,
+    '303051' : null,
+    '303041' : null,
+    '303071' : null,
+    '303061' : null,
+    '302711' : null
   };
 
   var createRaid = function(sequence, sequence2, name, max, magDelta, url, animeIDs, animeCounts, animeTypes, isHL) {
@@ -115,7 +122,8 @@
     '300171', '300181', '300191', '300261', '300391', '301371', '300531', '300541',
     '300201', '300211', '300221', '300271', '300431', '300461', '300561', '300571',
     '300231', '300241', '300251', '300281', '300401', '300551', '300581', '300591',
-    '300291', '301051', '300471', '301061'
+    '300291', '301051', '300471', '301061',
+    '302751', '303051', '303041', '303071', '303061', '302711'
   ];
 
   var currRaidList      = [];
@@ -184,6 +192,13 @@
     '301051' : createRaid(53, 41, 'Grand (EX)', 2, 0, '2040065000_hell.jpg', ['82'], [1], ['raid'], false),
     '300471' : createRaid(54, 48, 'Rose (HL)', 1, 0, '2040105000_high.jpg', ['1204'], [10], ['material'], true),
     '301061' : createRaid(55, 55, 'Bahamut (HL)', 1, 0, '2040128000_hell.jpg', ['59'], [1], ['raid'], true),
+
+    '302751' : createRaid(56, 56, 'Prometheus', 1, 0, '2040125000_high.png', ['41'], [1], ['raid'], true),
+    '303051' : createRaid(57, 57, 'Morrigna', 1, 0, '2040122000_high.png', ['44'], [1], ['raid'], true),
+    '303041' : createRaid(58, 58, 'Ca Ong', 1, 0, '2040160000_high.png', ['42'], [1], ['raid'], true),
+    '303071' : createRaid(59, 59, 'Anubis', 1, 0, '2040134000_high.png', ['46'], [1], ['raid'], true),
+    '302711' : createRaid(60, 60, 'Gilgamesh', 1, 0, '2040130000_high.png', ['43'], [1], ['raid'], true),
+    '303061' : createRaid(61, 61, 'Hector', 1, 0, '2040144000_high.png', ['45'], [1], ['raid'], true)
   };
 
   var tweetHash = {
@@ -278,7 +293,7 @@
 
     'Lvl 100 Raphael': 'Lv100 ラファエル',
     'Lvl 100 Gabriel': 'Lv100 ガブリエル',
-    'Lvl 100 Uriel': 'Lv100 ウリエル',
+    'Lvl 100 Uriel':   'Lv100 ウリエル',
     'Lvl 100 Michael': 'Lv100 ミカエル'
   };
 

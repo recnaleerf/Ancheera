@@ -97,7 +97,14 @@
     '20691' : false,
     '20701' : false,
     '20751' : false,
-    '20761' : false
+    '20761' : false,
+
+    '302751': null,
+    '303051': null,
+    '303041': null,
+    '303071': null,
+    '302711': null,
+    '303061': null
   };
 
   var hlRaids = [
