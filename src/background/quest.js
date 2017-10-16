@@ -693,7 +693,7 @@
     },
 
     CheckMulti: function(json) {
-      if (json.is_multi) {
+      if (json.quest_type === 1) {
         quest.url = '#raid_multi/';
       }
     },
