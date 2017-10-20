@@ -261,7 +261,7 @@
           Dailies.DecPrimarchs(message.request.payload);
         }
         if (message.request.url.indexOf('/quest/raid_info?') !== -1) {
-          Quest.CheckMulti(message.request.response);
+          Quest.CheckMulti(message.request.payload);
           //is_multi
         }
 
